@@ -9,7 +9,7 @@ const HousesList = async ({houses}: {houses: House[]}) => {
     
     return (
         <Container>
-    <div className="grid gris-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12 mt-4">
+    <div className="grid gris-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-8 gap-y-12 mt-4">
         {houses.map((house) => (
             <HouseCard key={uuid()} house={house}/>
         ))}

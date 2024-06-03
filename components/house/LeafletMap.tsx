@@ -1,0 +1,47 @@
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import { Icon } from "leaflet";
+
+interface MapProps {
+  cityLatitude: string;
+  cityLongitude: string;
+}
+
+const LeafletMap = ({ cityLatitude, cityLongitude }: MapProps) => {
+  const markers = [
+    {
+      latitude: 48.39,
+      longitude: -4.4806,
+    },
+  ];
+
+  const customIcon = new Icon({
+    iconUrl: "https://img.icons8.com/?size=48&id=13800&format=png",
+    iconSize: [38, 38],
+  });
+
+  return (
+    <MapContainer
+      // Coordonnées géographiques du logement (latitude, longitude)
+      center={[`${cityLatitude}`, `${cityLongitude}`]}
+      zoom={13}
+      className="h-[400px] rounded-md"
+    >
+      <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      {markers.map((marker) => (
+        <Marker
+          position={[marker.latitude, marker.longitude]}
+          icon={customIcon}
+        >
+          {/* //TODO: Trouver infos à mettre dans la popup */}
+          <Popup>Nom de la maison</Popup>
+        </Marker>
+      ))}
+    </MapContainer>
+  );
+};
+
+export default LeafletMap;

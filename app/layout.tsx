@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
-import {
-  ClerkProvider,
-} from '@clerk/nextjs'
+import { ClerkProvider } from "@clerk/nextjs";
 import { NavBar } from "@/components/navigation/NavBar";
 import { ThemeProvider } from "@/components/provider/theme/ThemeProvider";
 import { Toaster } from "@/components/ui/toaster";
+import Spacing from "@/components/elements/Spacing";
+import Responsive from "@/components/utils/Responsive";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,19 +23,22 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-    <html lang="fr" suppressHydrationWarning>
-      <body className={inter.className}>
-      <ThemeProvider
-                  attribute="class"
-                  defaultTheme="system"
-                  enableSystem
-                  disableTransitionOnChange
-               >
-        <NavBar/>
-        {children}
-        <Toaster />
-        </ThemeProvider></body>
-    </html>
+      <html lang="fr" suppressHydrationWarning>
+        <body className={inter.className}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Responsive/>
+            <NavBar />
+            <Spacing size="xs" />
+            {children}
+            <Toaster />
+          </ThemeProvider>
+        </body>
+      </html>
     </ClerkProvider>
   );
 }
