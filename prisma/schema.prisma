@@ -1,0 +1,157 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String   @id @default(uuid())
+  role             Role     @default(USER)
+  // Informations
+  firstName        String?
+  lastName         String?
+  phone            String?
+  profilePicture   String?
+  coverPicture     String?
+  // Identifiants
+  email            String   @unique
+  password         String
+  isEmailConfirmed Boolean  @default(false)
+  // Création, modification
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // houses            House[]
+  Sessions          Session[]
+  VerificationToken VerificationToken[]
+  // Avis client
+  Opinions          Opinion[]
+}
+
+model Session {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  expiresAt DateTime
+  handle    String   @unique
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
+}
+
+model VerificationToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  expiresAt DateTime
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
+}
+
+model House {
+  id          String    @id @default(uuid())
+  // Localisation
+  country     String
+  state       String
+  city        String
+  address     String
+  // Création, modification
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now())
+  // Disponibilité
+  available   Boolean   @default(true)
+  // Informations
+  title       String?   @db.Text
+  image       String
+  description String?   @db.LongText
+  ownerId String
+  // Propriétaire
+  // owner       User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  // ownerId     String
+  // Équipements etc...
+  // categories  Category  @relation(fields: [categoryId], references: [id])
+  // categoryId  String
+  // equipments  Equipment @relation(fields: [equipmentId], references: [id])
+  // equipmentId String
+  // features    Feature   @relation(fields: [featureId], references: [id])
+  // featureId   String
+  // Avis client
+  Opinions    Opinion[]
+
+  // Réservations
+  bookings Booking[]
+
+  // @@index([ownerId])
+}
+
+model Opinion {
+  id       String @id @default(uuid())
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String
+  house    House  @relation(fields: [houseId], references: [id], onDelete: Cascade)
+  houseId  String
+
+  @@index([authorId])
+  @@index([houseId])
+}
+
+model Category {
+  id      String  @id @default(uuid())
+  name    String
+  bgColor String?
+  image   String?
+  // house   House[]
+}
+
+model Equipment {
+  id   String  @id @default(uuid())
+  name String
+  logo String?
+  // house House[]
+}
+
+model Feature {
+  id       String @id @default(uuid())
+  name     String
+  quantity Int
+  // house    House[]
+}
+
+model Booking {
+  id              String   @id @default(uuid())
+  // Maison réservée
+  House           House?   @relation(fields: [houseId], references: [id], onDelete: Cascade)
+  houseId         String?
+  // Personne qui réserve
+  userName        String
+  userId          String
+  // Propriétaire de la maison
+  houseOwnerId    String
+  // Dates de la réservation
+  startDate       DateTime
+  endTime         DateTime
+  // Devise
+  currency        String   @default("Français")
+  // Prix et status du paiement
+  totalPrice      Int
+  paymentStatus   Boolean  @default(false)
+  paymentIntentId String   @unique
+  // Date de la réservation
+  bookedAt        DateTime @default(now())
+
+  @@index([houseId])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
