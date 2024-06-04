@@ -5,7 +5,6 @@ import useLocation from "@/hooks/useLocations";
 import { cn } from "@/lib/utils";
 import { House } from "@prisma/client";
 import Image from "next/image";
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
 const HouseCard = ({ house }: { house: House }) => {
@@ -15,6 +14,8 @@ const HouseCard = ({ house }: { house: House }) => {
 
   const {getCountryByCode} = useLocation();
   const country = getCountryByCode(house.country);
+
+  
 
   return (
     <div
@@ -30,6 +31,7 @@ const HouseCard = ({ house }: { house: House }) => {
           <Image
             src={house.image}
             fill
+            sizes="100%"
             alt="Photo d'une maison"
             className="object-cover rounded-lg h-full w-full"
           />

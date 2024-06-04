@@ -17,10 +17,9 @@ import Link from "next/link";
 import { SignOutButton, useUser } from "@clerk/nextjs";
 import { ThemeToggle } from "../provider/theme/ThemeToggle";
 import { UserAvatar } from "../utils/UserAvatar";
-import { currentUser } from "@clerk/nextjs/server";
 
-export async function UserMenu() {
-   const user = await currentUser();
+export function UserMenu() {
+   const { user } = useUser();
    return (
       <DropdownMenu>
          <DropdownMenuTrigger asChild>
@@ -32,8 +31,8 @@ export async function UserMenu() {
                <Menu className="cursor-pointer sm:mr-1 mx-1 sm:mx-0" />
                {/* // TODO {user.email} */}
                <UserAvatar
-                  email={user?.emailAddresses[0].emailAddress}
-                  image={user?.emailAddresses[0].emailAddress}
+                  email={user?.primaryEmailAddress ?? "louis@louis.fr"}
+                  image={user?.primaryEmailAddress ?? "louis@louis.fr"}
                />
             </Button>
          </DropdownMenuTrigger>

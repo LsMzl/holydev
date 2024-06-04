@@ -1,7 +1,6 @@
 "use client";
 // Database
 import { Booking, House } from "@prisma/client";
-import Container from "../elements/Container";
 
 // Hooks
 import useLocation from "@/hooks/useLocations";
@@ -9,28 +8,32 @@ import useLocation from "@/hooks/useLocations";
 // Components
 import { Typography } from "../ui/design-system/Typography";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
-import { toast } from "../ui/use-toast";
 import { Button } from "../ui/button";
 import LeafletMap from "./LeafletMap";
+import Container from "../elements/Container";
 
 // Icons
 import { Dot, Heart, Loader, MapPin, Share, Star, Wand2 } from "lucide-react";
 
 // React / Next
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-// Clerk
-import { useAuth } from "@clerk/nextjs";
-
 // Libraries
-import { DateRangePicker } from "./DateRangePicker";
+import { differenceInCalendarDays, eachDayOfInterval, format } from "date-fns";
+import Reservation from "./Reservation";
 import { DateRange } from "react-day-picker";
-import { differenceInCalendarDays, format } from "date-fns";
 import useBookHouse from "@/hooks/useBookHouse";
-import axios from "axios";
+import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import { toast } from "../ui/use-toast";
+import { DateRangePicker } from "./DateRangePicker";
+
+interface HouseProps {
+  house: House;
+  bookings?: Booking[];
+}
 
 const HouseDetails = ({
   house,
@@ -43,17 +46,15 @@ const HouseDetails = ({
   const country = getCountryByCode(house.country);
   const state = getStateByCode(house.country, house.state);
 
-  // Gestion des reservations
+  const { userId } = useAuth();
+  const router = useRouter();
+
   const [date, setDate] = useState<DateRange | undefined>();
   const [totalPrice, setTotalPrice] = useState(0);
   const [days, setDays] = useState(0);
   const [bookingIsLoading, setBookingIsLoading] = useState(false);
   const { setHouseData, paymentIntentId, setClientSecret, setPaymentIntentId } =
     useBookHouse();
-
-  //! = auth() si probleme
-  const { userId } = useAuth();
-  const router = useRouter();
 
   // Calcul du nombre de jours et du prix
   useEffect(() => {
@@ -73,6 +74,26 @@ const HouseDetails = ({
       }
     }
   }, [date, house.price]);
+
+  /** Dates indisponibles car déjà réservées. */
+  const disabledDates = useMemo(() => {
+    let dates: Date[] = [];
+
+    const houseBookings = bookings?.filter(
+      (booking) => booking.houseId === house.id && booking.paymentStatus
+    );
+
+    // Attribution d'une date de départ et de fin pour chaque réservation
+    houseBookings?.forEach((booking) => {
+      const range = eachDayOfInterval({
+        start: new Date(booking.startDate),
+        end: new Date(booking.endDate),
+      });
+      // Nouvelles dates non disponibles
+      dates = [...dates, ...range];
+    });
+    return dates;
+  }, [bookings]);
 
   const handleBookHouse = () => {
     //! Pas d'utilisateur connecté
@@ -288,7 +309,11 @@ const HouseDetails = ({
               <p className="text-sm mb-2">
                 Choisissez les dates de votre séjour
               </p>
-              <DateRangePicker date={date} setDate={setDate} />
+              <DateRangePicker
+                date={date}
+                setDate={setDate}
+                disabledDates={disabledDates}
+              />
             </div>
 
             {/* Reservation Button */}
@@ -408,25 +433,3 @@ const HouseDetails = ({
 };
 
 export default HouseDetails;
-function setHouseData(bookingHouseData: {
-  house: {
-    id: string;
-    country: string;
-    state: string;
-    city: string;
-    address: string;
-    createdAt: Date;
-    updatedAt: Date;
-    available: boolean;
-    title: string | null;
-    image: string;
-    description: string | null;
-    ownerId: string;
-    price: number;
-  };
-  totalPrice: number;
-  startDate: Date;
-  endDate: Date;
-}) {
-  throw new Error("Function not implemented.");
-}

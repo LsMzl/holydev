@@ -1,8 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { addDays, format } from "date-fns";
+import { format } from "date-fns";
 import { DateRange } from "react-day-picker";
+import { fr } from "date-fns/locale";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -18,9 +19,15 @@ interface DatePickerProps {
   className?: React.HTMLAttributes<HTMLDivElement>;
   date: DateRange | undefined;
   setDate: React.Dispatch<React.SetStateAction<DateRange | undefined>>;
+  disabledDates: Date[];
 }
 
-export function DateRangePicker({className, date, setDate}: DatePickerProps) {
+export function DateRangePicker({
+  className,
+  date,
+  setDate,
+  disabledDates,
+}: DatePickerProps) {
   return (
     <div className={cn("grid gap-2", className)}>
       <Popover>
@@ -57,6 +64,8 @@ export function DateRangePicker({className, date, setDate}: DatePickerProps) {
             selected={date}
             onSelect={setDate}
             numberOfMonths={1}
+            locale={fr}
+            disabled={disabledDates}
           />
         </PopoverContent>
       </Popover>

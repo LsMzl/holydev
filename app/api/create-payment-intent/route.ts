@@ -47,8 +47,37 @@ export async function POST(req: Request) {
 
   //? Si réservation & paiement déjà existant
   if (foundBooking && payment_intent_id) {
-    // Mise à jour du paiement
-    //!....
+    // Récupération du paiement dans Stripe
+    const current_intent = await stripe.paymentIntents.retrieve(
+      payment_intent_id
+    );
+
+    //? Si paiement retrouvé, mise à jour du paiement
+    if (current_intent) {
+      const updated_intent = await stripe.paymentIntents.update(
+        payment_intent_id,
+        {
+          amount: bookingData.totalPrice * 100,
+        }
+      );
+
+      // Mise à jour de la réservation dans la base de données
+      const res = await db.booking.update({
+        where: {
+          paymentIntentId: payment_intent_id,
+          userId: user.id,
+        },
+        data: bookingData,
+      });
+
+      //! Erreur
+      if (!res) {
+        return NextResponse.error();
+      }
+
+      return NextResponse.json({ paymentIntent: updated_intent });
+    }
+
     //? Si nouvelle réservation
   } else {
     // Création d'un nouveau paiement dans la base de données
