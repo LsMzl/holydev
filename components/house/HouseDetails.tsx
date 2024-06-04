@@ -1,19 +1,36 @@
 "use client";
-
+// Database
 import { Booking, House } from "@prisma/client";
 import Container from "../elements/Container";
+
+// Hooks
 import useLocation from "@/hooks/useLocations";
+
+// Components
 import { Typography } from "../ui/design-system/Typography";
-import Image from "next/image";
-import { Dot, Heart, MapPin, Share, Star } from "lucide-react";
-import { Button } from "../ui/button";
-import React, { useEffect, useState } from "react";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
+import { toast } from "../ui/use-toast";
+import { Button } from "../ui/button";
 import LeafletMap from "./LeafletMap";
+
+// Icons
+import { Dot, Heart, Loader, MapPin, Share, Star, Wand2 } from "lucide-react";
+
+// React / Next
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
+
+// Clerk
+import { useAuth } from "@clerk/nextjs";
+
+// Libraries
 import { DateRangePicker } from "./DateRangePicker";
 import { DateRange } from "react-day-picker";
 import { differenceInCalendarDays, format } from "date-fns";
+import useBookHouse from "@/hooks/useBookHouse";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const HouseDetails = ({
   house,
@@ -30,7 +47,15 @@ const HouseDetails = ({
   const [date, setDate] = useState<DateRange | undefined>();
   const [totalPrice, setTotalPrice] = useState(0);
   const [days, setDays] = useState(0);
+  const [bookingIsLoading, setBookingIsLoading] = useState(false);
+  const { setHouseData, paymentIntentId, setClientSecret, setPaymentIntentId } =
+    useBookHouse();
 
+  //! = auth() si probleme
+  const { userId } = useAuth();
+  const router = useRouter();
+
+  // Calcul du nombre de jours et du prix
   useEffect(() => {
     // Si les date provenant de <DateRange> existent
     if (date && date.from && date.to) {
@@ -48,6 +73,89 @@ const HouseDetails = ({
       }
     }
   }, [date, house.price]);
+
+  const handleBookHouse = () => {
+    //! Pas d'utilisateur connecté
+    if (!userId) {
+      return toast({
+        variant: "destructive",
+        title: "Vous devez être connecté pour réserver",
+        description: <Link href={"/sign-in"}>Connexion</Link>,
+      });
+    }
+
+    //? pas sur de devoir mettre ça
+    if (!house?.ownerId) {
+      return toast({
+        variant: "destructive",
+        description: "Une erreur s'est produite, veuillez réessayer plus tard",
+      });
+    }
+
+    //? Si l'utilisateur à bien selectionné des dates de réservation
+    if (date?.from && date?.to) {
+      setBookingIsLoading(true);
+
+      // Création des données de réservation selon useBookHouse()
+      const bookingHouseData = {
+        house,
+        totalPrice,
+        startDate: date.from,
+        endDate: date.to,
+      };
+      // Mise à jour des données de réservation
+      setHouseData(bookingHouseData);
+
+      // Envoie des données de réservation à l'API
+      fetch("/api/create-payment-intent", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          // Informations de réservation
+          booking: {
+            houseOwnerId: house.ownerId,
+            houseId: house.id,
+            startDate: date.from,
+            endDate: date.to,
+            totalPrice: totalPrice,
+          },
+          // Identifiant de la transaction
+          paiement_intent_id: paymentIntentId,
+        }),
+      })
+        .then((res) => {
+          setBookingIsLoading(false);
+          if (res.status === 401) {
+            return toast({
+              variant: "destructive",
+              title: "Vous devez être connecté pour réserver",
+              description: <Link href={"/sign-in"}>Connexion</Link>,
+            });
+          }
+          return res.json();
+        })
+        .then((data) => {
+          // Mise à jour des informations de paiement et redirection vers //! ...
+          setClientSecret(data.paymentIntent.client_secret);
+          setPaymentIntentId(data.paymentIntent.id);
+          router.push("/book-house");
+        })
+        .catch((error: any) => {
+          console.log("error", error);
+          toast({
+            variant: "destructive",
+            description: `Une erreur est survenue, ${error.message}`,
+          });
+        });
+    } else {
+      return toast({
+        variant: "destructive",
+        description: "Vous devez sélectionner des dates pour votre réservation",
+      });
+    }
+  };
 
   return (
     <Container>
@@ -124,7 +232,10 @@ const HouseDetails = ({
           </p>
           {/* Date de mise en ligne */}
           <Typography variant="body-xs" className=" md:pb-5 mt-2">
-            Mis en ligne le <span className="font-medium">{format(house.createdAt, "dd MMMM yyyy")}</span>{" "}
+            Mis en ligne le{" "}
+            <span className="font-medium">
+              {format(house.createdAt, "dd MMMM yyyy")}
+            </span>{" "}
           </Typography>
 
           {/* Owner Informations & Contact */}
@@ -171,6 +282,7 @@ const HouseDetails = ({
         <div className="md:w-[30%]">
           <div className=" md:rounded-xl md:border md:shadow-md md:p-5">
             <h4 className="font-medium text-xl mb-3">Réservation</h4>
+
             {/* Calendrier */}
             <div className="mb-5">
               <p className="text-sm mb-2">
@@ -178,14 +290,28 @@ const HouseDetails = ({
               </p>
               <DateRangePicker date={date} setDate={setDate} />
             </div>
+
+            {/* Reservation Button */}
             {/* //TODO: Si connecté, lien vers page de réservation, sinon lien vers page de connexion et toast pour indiqué qu'il doit être connecté pour réserver*/}
-            <Button className="w-full text-white bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-pink-500 hover:to-yellow-500">
-              Réserver
+            <Button
+              onClick={() => handleBookHouse()}
+              disabled={bookingIsLoading}
+              type="button"
+              className="w-full text-white bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-pink-500 hover:to-yellow-500"
+            >
+              {bookingIsLoading ? (
+                <Loader className="mr-2 h-4 w-4" />
+              ) : (
+                <Wand2 className="mr-2 h-4 w-4" />
+              )}
+              {bookingIsLoading ? "Chargement" : "Réserver"}
             </Button>
+
             <p className="text-center my-3">
               Lorem ipsum dolor sit amet consectetur adipisicing elit.
             </p>
 
+            {/* Reservation Details */}
             <div className="text-lg flex flex-col gap-2">
               <div className="flex items-center justify-between">
                 <p>
@@ -206,9 +332,7 @@ const HouseDetails = ({
                 <p>{totalPrice} €</p>
               </div>
               <div className="pt-3 font-semibold flex items-center justify-between">
-              <p>
-                  Total
-                </p>
+                <p>Total</p>
                 <p>{totalPrice} €</p>
               </div>
             </div>
@@ -284,3 +408,25 @@ const HouseDetails = ({
 };
 
 export default HouseDetails;
+function setHouseData(bookingHouseData: {
+  house: {
+    id: string;
+    country: string;
+    state: string;
+    city: string;
+    address: string;
+    createdAt: Date;
+    updatedAt: Date;
+    available: boolean;
+    title: string | null;
+    image: string;
+    description: string | null;
+    ownerId: string;
+    price: number;
+  };
+  totalPrice: number;
+  startDate: Date;
+  endDate: Date;
+}) {
+  throw new Error("Function not implemented.");
+}

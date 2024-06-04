@@ -4,11 +4,11 @@ import { persist } from "zustand/middleware";
 
 interface BookHouseStore {
   bookingHouseData: HouseDataType | null;
-  paymentIntent: string | null;
+  paymentIntentId: string | null;
   clientSecret: string | undefined;
 
   setHouseData: (data: HouseDataType) => void;
-  setPaymentIntent: (paymentIntent: string) => void;
+  setPaymentIntentId: (paymentIntentId: string) => void;
   setClientSecret: (clientSecret: string) => void;
   resetBookHouse: () => void;
 }
@@ -28,13 +28,13 @@ const useBookHouse = create<BookHouseStore>()(
   persist(
     (set) => ({
       bookingHouseData: null,
-      paymentIntent: null,
+      paymentIntentId: null,
       clientSecret: undefined,
       setHouseData: (data: HouseDataType) => {
         set({ bookingHouseData: data });
       },
-      setPaymentIntent: (paymentIntent: string) => {
-        set({ paymentIntent });
+      setPaymentIntentId: (paymentIntentId: string) => {
+        set({ paymentIntentId });
       },
       setClientSecret: (clientSecret: string) => {
         set({ clientSecret });
@@ -42,7 +42,7 @@ const useBookHouse = create<BookHouseStore>()(
       resetBookHouse: () => {
         set({
           bookingHouseData: null,
-          paymentIntent: null,
+          paymentIntentId: null,
           clientSecret: undefined,
         });
       },

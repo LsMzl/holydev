@@ -2,7 +2,7 @@
  * Route en POST permettant de créer une nouvelle annonce.
  * Récupération des informations de l'annonce depuis le body.
  * Récupération de l'id de l'utilisateur connecté.
- * @creation 02.06.2024 Louis Mazzella
+ * @creation 02.06.2024 - Louis Mazzella
  */
 
 import { db } from "@/lib/db"

@@ -130,17 +130,18 @@ model Feature {
 
 model Booking {
   id              String   @id @default(uuid())
-  // Maison réservée
-  House           House?   @relation(fields: [houseId], references: [id], onDelete: Cascade)
-  houseId         String?
   // Personne qui réserve
   userName        String
   userId          String
+  userEmail       String
+  // Maison réservée
+  House           House?   @relation(fields: [houseId], references: [id], onDelete: Cascade)
+  houseId         String?
   // Propriétaire de la maison
   houseOwnerId    String
   // Dates de la réservation
   startDate       DateTime
-  endTime         DateTime
+  endDate        DateTime
   // Devise
   currency        String   @default("Français")
   // Prix et status du paiement

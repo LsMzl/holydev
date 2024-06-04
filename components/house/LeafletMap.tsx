@@ -2,6 +2,8 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { Icon } from "leaflet";
 
+import { v4 as uuidv4 } from 'uuid'
+
 interface MapProps {
   cityLatitude: string;
   cityLongitude: string;
@@ -35,6 +37,7 @@ const LeafletMap = ({ cityLatitude, cityLongitude }: MapProps) => {
         <Marker
           position={[marker.latitude, marker.longitude]}
           icon={customIcon}
+          key={uuidv4()}
         >
           {/* //TODO: Trouver infos à mettre dans la popup */}
           <Popup>Nom de la maison</Popup>
