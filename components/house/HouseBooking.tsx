@@ -1,34 +1,47 @@
 "use client";
+
+// Components
 import Container from "@/components/elements/Container";
-import HouseCard from "@/components/elements/cards/HouseCard";
-import useBookHouse from "@/hooks/useBookHouse";
+import HousePaymentForm from "../forms/house/HousePaymentForm";
+import { Button } from "../ui/button";
+
+// Stripe
 import { StripeElementsOptions, loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
-import HousePaymentForm from "../forms/house/HousePaymentForm";
+
+// Hooks
+import useBookHouse from "@/hooks/useBookHouse";
+
+// React/Next
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
-import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 
+
+// Initialisation de Stripe
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string
 );
-
+/** Gestion des réservations. */
 const HouseBooking = () => {
+  // Hooks
   const { bookingHouseData, clientSecret } = useBookHouse();
+
+  // States
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [pageLoaded, setPageLoaded] = useState(false);
+
+  // Components
   const { theme } = useTheme();
+
+  // Next
   const router = useRouter();
 
-
+  // Défini l'état de chargement de la page à true.
   useEffect(() => {
     setPageLoaded(true);
   },[])
-
-
-
 
   // Options du formulaire
   const options: StripeElementsOptions = {
@@ -39,6 +52,7 @@ const HouseBooking = () => {
     },
   };
 
+  // Défini le status de paiement à true.
   const handleSetPaymentSuccess = (value: boolean) => {
     setPaymentSuccess(value);
   };
