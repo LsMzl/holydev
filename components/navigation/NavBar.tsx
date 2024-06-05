@@ -29,10 +29,10 @@ export function NavBar() {
     <div className="border-b border-gray-200 bg-background/50">
       <Container className="flex items-center py-3 justify-between">
         {/* Logo */}
-        <Link href="/" className="text-4xl hidden sm:block">
+        <Link href="/" className="text-4xl " title="Retour à la page d'accueil">
           <div className="flex items-center gap-2">
-            <Image src={Logo} width={60} height={60} alt="Logo de Holydevs représentant des maisons de vacances sous des palmiers" />
-            <Typography variant="lead" className="font-semibold text-red-500">
+            <Image src={Logo} width={60} height={60} alt="Logo de Holydevs représentant des maisons de vacances sous des palmiers." />
+            <Typography variant="lead" className="hidden sm:block font-semibold text-red-500">
               Holydevs
             </Typography>
           </div>

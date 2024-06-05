@@ -200,7 +200,7 @@ const HousePaymentForm = ({
   return (
     <form onSubmit={handleSubmit} id="payment-form">
       {/* Formulaire */}
-      <div className=" border rounded-lg p-5 mb-5 shadow">
+      <div className=" p-5 mb-5 ">
         <h2 className="font-medium mb-2 text-lg">Adresse de facturation</h2>
         <AddressElement
           options={{
@@ -220,8 +220,8 @@ const HousePaymentForm = ({
         </div>
       </div>
 
-      <div className="flex flex-col gap-1">
-        <div className="flex flex-col gap-1 mb-5">
+      <div className="flex flex-col gap-1 ml-5">
+        <div className="flex flex-col gap-1  ">
           <h2 className="font-medium mb-1 text-lg">Résumé de la réservation</h2>
           <p className="font-light text-sm">
             L'accueil dans le logement est prévu le {startDate} à 17 heures.
@@ -230,10 +230,10 @@ const HousePaymentForm = ({
             Le départ est prévu le {endDate} à 17 heures.
           </p>
         </div>
-        <Separator />
+        <Separator className="px-5 my-5"/>
 
         {/* Prix Total */}
-        <div className="my-5 flex items-center gap-1">
+        <div className="flex items-center gap-1 mb-2">
           <p className="font-semibold text-lg ">Prix total:</p>
           <p>{bookingHouseData?.totalPrice} €</p>
         </div>
@@ -249,7 +249,7 @@ const HousePaymentForm = ({
         </Alert>
       )}
       {/* Validation du paiement */}
-      <Button disabled={isLoading} className="px-10 text-md">
+      <Button disabled={isLoading} className="px-10 text-md ml-5">
         {isLoading ? "En cours..." : "Valider"}
       </Button>
     </form>

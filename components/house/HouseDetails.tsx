@@ -22,7 +22,6 @@ import Link from "next/link";
 
 // Libraries
 import { differenceInCalendarDays, eachDayOfInterval, format } from "date-fns";
-import Reservation from "./Reservation";
 import { DateRange } from "react-day-picker";
 import useBookHouse from "@/hooks/useBookHouse";
 import { useAuth } from "@clerk/nextjs";
