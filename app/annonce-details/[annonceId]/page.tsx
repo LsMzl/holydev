@@ -3,8 +3,8 @@
  * @creation 03.06.2024 Louis Mazzella
  */
 
-import { getBookings } from "@/app/actions/getBookings";
-import { getHouseById } from "@/app/actions/getHouseById";
+import { getBookings } from "@/queries/getBookings";
+import { getHouseById } from "@/queries/getHouseById";
 import HouseDetails from "@/components/house/HouseDetails";
 import React from "react";
 
@@ -21,7 +21,7 @@ const AnnonceDetails = async ({ params }: HouseDetailsProps) => {
   /** Contient toutes les réservations d'une maison */
   const bookings = await getBookings(house?.id ?? "");
 
-  return <HouseDetails house={house} bookings={bookings}/>;
+  return <HouseDetails house={house} bookings={bookings} />;
 };
 
 export default AnnonceDetails;

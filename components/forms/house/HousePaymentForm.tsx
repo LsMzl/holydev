@@ -1,35 +1,97 @@
 "use client";
+// Components
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+
+// Hooks
 import useBookHouse from "@/hooks/useBookHouse";
+
+// Libraries
+import moment from "moment";
+import "moment/locale/fr";
+import axios from "axios";
 import {
   AddressElement,
   PaymentElement,
   useElements,
   useStripe,
 } from "@stripe/react-stripe-js";
+import { endOfDay, isWithinInterval, startOfDay } from "date-fns";
+
+// React/Next
 import { useEffect, useState } from "react";
-import moment, { locale } from "moment";
-import "moment/locale/fr";
-import { Button } from "@/components/ui/button";
-import axios from "axios";
 import { useRouter } from "next/navigation";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+
+// Datas
+import { Booking } from "@prisma/client";
 
 interface HousePaymentFormProps {
   clientSecret: string;
   handleSetPaymentSuccess: (value: boolean) => void;
 }
 
+type DateRangesType = {
+  startDate: Date;
+  endDate: Date;
+};
+
+/**
+ * Détermine si des dates se chevauchement au niveau des réservations.
+ * @param startDate Date de départ de la réservation.
+ * @param endDate Date de fin de la réservation.
+ * @param dateRange Plage de dates.
+ * @returns
+ */
+function hasOverlap(
+  startDate: Date,
+  endDate: Date,
+  dateRange: DateRangesType[]
+) {
+  // Création de l'interval de dates cible
+  const targetInterval = {
+    start: startOfDay(new Date(startDate)),
+    end: endOfDay(new Date(endDate)),
+  };
+  // Parcours des plages de dates
+  for (const range of dateRange) {
+    const rangeStart = startOfDay(new Date(range.startDate));
+    const rangeEnd = endOfDay(new Date(range.endDate));
+
+    //? Date de départ ou de fin de réservation à l'intérieur de la plage de dates cible = overlaps
+    if (
+      isWithinInterval(targetInterval.start, {
+        start: rangeStart,
+        end: rangeEnd,
+      }) ||
+      isWithinInterval(targetInterval.end, {
+        start: rangeStart,
+        end: rangeEnd,
+      }) ||
+      (targetInterval.start < rangeStart && targetInterval.end > rangeEnd)
+    ) {
+      return true;
+    }
+  }
+  // Pas de chevauchement
+  return false;
+}
+
 const HousePaymentForm = ({
   clientSecret,
   handleSetPaymentSuccess,
 }: HousePaymentFormProps) => {
+  // Hooks
   const { bookingHouseData, resetBookHouse } = useBookHouse();
+  // Stripe
   const stripe = useStripe();
   const elements = useElements();
+  // States
   const [isLoading, setIsLoading] = useState(false);
+  // Components
   const { toast } = useToast();
+  // Next
   const router = useRouter();
 
   // Vérification que stripe fonctionne au lancement de la page
@@ -57,39 +119,67 @@ const HousePaymentForm = ({
     }
 
     try {
-      // Paiement
-      stripe
-        .confirmPayment({ elements, redirect: "if_required" })
-        .then((result) => {
-          //* payment succes
-          if (!result.error) {
-            axios
-              .patch(`/api/booking/${result.paymentIntent.id}`)
-              .then((res) => {
-                toast({
-                  variant: "success",
-                  description: "Paiement effectué avec succès!",
-                });
-                router.refresh();
-                // Mise à zéro du local storage
-                resetBookHouse();
-                handleSetPaymentSuccess(true);
-                setIsLoading(false);
-              })
-              .catch((error) => {
-                console.log("error", error);
-                toast({
-                  variant: "destructive",
-                  description:
-                    "Une erreur s'est produite lors du paiement. Veuillez réessayer",
-                });
-                setIsLoading(false);
-              });
-            //! Erreur de paiement
-          } else {
-            setIsLoading(false);
-          }
+      //? Chevauchement de dates
+      const bookings = await axios.get(
+        `api/booking/${bookingHouseData.house.id}`
+      );
+
+      const houseBookingsDates = bookings.data.map((booking: Booking) => {
+        return {
+          startDate: booking.startDate,
+          endDate: booking.endDate,
+        };
+      });
+
+      const overlapFound = hasOverlap(
+        bookingHouseData.startDate,
+        bookingHouseData.endDate,
+        houseBookingsDates
+      );
+
+      //! Chevauchement de dates trouvé
+      if (overlapFound) {
+        setIsLoading(false);
+        return toast({
+          variant: "destructive",
+          description:
+            "Certains des jours sélectionnés sont déjà réservés. Veuillez choisir des dates différentes.",
         });
+      }
+
+      // Paiement
+       stripe
+         .confirmPayment({ elements, redirect: "if_required" })
+         .then((result) => {
+           //* Payment succes
+           if (!result.error) {
+             axios
+               .patch(`/api/booking/${result.paymentIntent.id}`)
+               .then((res) => {
+                 toast({
+                   variant: "success",
+                   description: "Paiement effectué avec succès!",
+                 });
+                 router.refresh();
+                 // Mise à zéro du local storage
+                 resetBookHouse();
+                 handleSetPaymentSuccess(true);
+                 setIsLoading(false);
+               })
+               .catch((error) => {
+                 console.log("error", error);
+                 toast({
+                   variant: "destructive",
+                   description:
+                     "Une erreur s'est produite lors du paiement. Veuillez réessayer",
+                 });
+                 setIsLoading(false);
+               });
+             //! Erreur de paiement
+           } else {
+             setIsLoading(false);
+           }
+         });
     } catch (error) {
       console.log("error", error);
       setIsLoading(false);

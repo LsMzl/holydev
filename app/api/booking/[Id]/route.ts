@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
+/** Mise à jour d'une réservation */
 export async function PATCH(
   req: Request,
   { params }: { params: { Id: string } }
@@ -15,9 +16,9 @@ export async function PATCH(
     // Récupération de l'id de l'utilisateur connecté.
     const { userId } = auth();
 
-    //! Pas de paiement trouvé
+    //! Pas de réservation trouvé
     if (!params.Id) {
-      return new NextResponse("Payment Intent Id non trouvé", { status: 401 });
+      return new NextResponse("Identifiant de réservation non trouvé", { status: 401 });
     }
 
     //! Pas d'utilisateur trouvé
@@ -41,6 +42,47 @@ export async function PATCH(
   }
 }
 
+export async function GET(
+  req: Request,
+  { params }: { params: { Id: string } }
+) {
+  try {
+    // Récupération de l'id de l'utilisateur connecté.
+    const { userId } = auth();
+
+    //! Pas de réservation trouvé
+    if (!params.Id) {
+      return new NextResponse("Identifiant de réservation non trouvé", { status: 401 });
+    }
+
+    //! Pas d'utilisateur trouvé
+    if (!userId) {
+      return new NextResponse("Non autorisé", { status: 401 });
+    }
+
+    // Réservations d'aujourd'hui
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    const booking = await db.booking.findMany({
+      where: {
+        paymentStatus: true,
+        houseId: params.Id,
+        endDate: {
+          gt: yesterday,
+        },
+      },
+
+    });
+
+    return NextResponse.json(booking);
+  } catch (error) {
+    console.log("Error at api/booking/Id GET", error);
+    return new NextResponse("Internal server error", { status: 500 });
+  }
+}
+
+/** Suppression d'une réservation */
 export async function DELETE(
   req: Request,
   { params }: { params: { Id: string } }

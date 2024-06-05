@@ -5,7 +5,7 @@ import useBookHouse from "@/hooks/useBookHouse";
 import { StripeElementsOptions, loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import HousePaymentForm from "../forms/house/HousePaymentForm";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import { Button } from "../ui/button";
@@ -22,6 +22,14 @@ const HouseBooking = () => {
   const { theme } = useTheme();
   const router = useRouter();
 
+
+  useEffect(() => {
+    setPageLoaded(true);
+  },[])
+
+
+
+
   // Options du formulaire
   const options: StripeElementsOptions = {
     clientSecret,
@@ -36,10 +44,10 @@ const HouseBooking = () => {
   };
 
   //! Pas de paiement et pas de données de réservation ou identifiant de paiement utilisateur
-  if (!paymentSuccess && (!bookingHouseData || !clientSecret)) {
+  if (pageLoaded && !paymentSuccess && (!bookingHouseData || !clientSecret)) {
     return (
       <div className="flex flex-col items-center gap-4">
-        <p className="text-red-600 text-center text-xl">
+        <p className="text-red-500 text-center text-xl">
           Cette page ne peut pas s'afficher correctement..
         </p>
         <Button variant="outline" onClick={() => router.push("/")}>

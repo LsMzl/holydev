@@ -1,21 +1,26 @@
 "use client";
-import React from "react";
 
+// Components
+
+
+// Icons
 import { Locate, Search } from "lucide-react";
 
+// React / Next
 import Link from "next/link";
-import { Button } from "../ui/button";
+
+
 
 import { Typography } from "../ui/design-system/Typography";
 import Image from "next/image";
-import Logo from "../../public/assets/img/logo/logo.png";
+import Logo from "@/public/logo/logo.png";
 
 import { useAuth } from "@clerk/nextjs";
 
 import Container from "../elements/Container";
 import { UserMenu } from "./UserMenu";
 import { GuestMenu } from "./GuestMenu";
-import Spacing from "../elements/Spacing";
+
 
 export function NavBar() {
   const { userId } = useAuth();
@@ -26,7 +31,7 @@ export function NavBar() {
         {/* Logo */}
         <Link href="/" className="text-4xl hidden sm:block">
           <div className="flex items-center gap-2">
-            {/* <Image src={Logo} width={60} height={60} alt="Logo du site" /> */}
+            <Image src={Logo} width={60} height={60} alt="Logo de Holydevs représentant des maisons de vacances sous des palmiers" />
             <Typography variant="lead" className="font-semibold text-red-500">
               Holydevs
             </Typography>
