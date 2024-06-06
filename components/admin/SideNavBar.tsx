@@ -55,14 +55,9 @@ const SideNavBar = () => {
                   variant: "ghost",
                   href: "/dashboard/users",
                },
+
                {
-                  title: "Settings",
-                  icon: Settings,
-                  variant: "ghost",
-                  href: "/dashboard/settings",
-               },
-               {
-                  title: "Orders",
+                  title: "Réservations",
                   icon: ShoppingCart,
                   variant: "ghost",
                   href: "/dashboard/orders",
@@ -72,6 +67,12 @@ const SideNavBar = () => {
                   icon: MessagesSquare,
                   variant: "ghost",
                   href: "/dashboard/annonces",
+               },
+               {
+                  title: "Settings",
+                  icon: Settings,
+                  variant: "ghost",
+                  href: "/dashboard/settings",
                },
             ]}
          />
