@@ -20,6 +20,7 @@ import { useAuth } from "@clerk/nextjs";
 import Container from "../elements/Container";
 import { UserMenu } from "./UserMenu";
 import { GuestMenu } from "./GuestMenu";
+import SearchInput from "./SearchInput";
 
 
 export function NavBar() {
@@ -38,15 +39,7 @@ export function NavBar() {
           </div>
         </Link>
         {/* Input */}
-        <div className="flex">
-          <input className="border-r-0 rounded-r-0 border rounded-l-full border-gray-500 py-1.5" />
-          <button
-            className="border border-l-0 border-gray-500 rounded-r-full pr-2"
-            type="submit"
-          >
-            <Search size={20} />
-          </button>
-        </div>
+        <SearchInput/>
 
         <div className="flex items-center gap-3">
           <Locate />
