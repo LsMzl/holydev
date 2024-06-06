@@ -1,5 +1,11 @@
 
 
+
+
+
+SHADCN/UI
+npx shadcn-ui@latest init
+
 STRIPE
 npm install --save stripe
 npm install --save @stripe/react-stripe-js @stripe/stripe-js
@@ -7,3 +13,5 @@ npm install --save @stripe/react-stripe-js @stripe/stripe-js
 DATES
 date-fns
 moment
+
+npm i @react-hook/window-size

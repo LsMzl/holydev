@@ -1,6 +1,6 @@
 import HousesList from "@/components/home/HousesList";
 
-import { getAllHouses } from "../queries/getAllHouses";
+import { getAllHouses } from "../../queries/getAllHouses";
 import LocationFilter from "@/components/navigation/LocationFilter";
 
 interface HousesProps {
