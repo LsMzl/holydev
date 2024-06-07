@@ -1,15 +1,8 @@
 import { db } from "@/lib/db";
 
-export const getAllCategories = async (searchParams: { name: string }) => {
+export const getAllCategories = async () => {
    try {
-      const { name } = searchParams;
-      const categories = await db.category.findMany({
-         where: {
-            name: {
-               contains: name,
-            },
-         },
-      });
+      const categories = await db.category.findMany({});
       return categories;
    } catch (error: any) {
       console.log("error >>", error);

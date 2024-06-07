@@ -4,13 +4,13 @@ import { Typography } from "@/components/ui/design-system/Typography";
 import { auth } from "@clerk/nextjs/server";
 import React from "react";
 
-interface HousePageprops {
+interface HousePageProps {
   params: {
     annonceId: string;
   };
 }
 
-const House = async ({ params }: HousePageprops) => {
+const House = async ({ params }: HousePageProps) => {
   // Check if the house doesn't exist
   const house = await getHouseById(params.annonceId);
   // Session user id

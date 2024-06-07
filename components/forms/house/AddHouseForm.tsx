@@ -52,7 +52,7 @@ interface AddHouseProps {
   house: House | null;
 }
 
-/** Format du formulaire. */
+/** Schéma du formulaire. */
 const formSchema = z.object({
   title: z.string().min(3, {
     message: "Le nom de l'annonce doit contenir au moins 3 caractères",
@@ -182,7 +182,7 @@ const AddHouseForm = ({ house }: AddHouseProps) => {
             description: "Annonce créée avec succès !",
           });
           setIsLoading(false);
-          router.push(`/annonce/${res.data.id}`);
+          router.push(`/annonce-details/${res.data.id}`);
         })
         .catch((error) => {
           console.log(error);

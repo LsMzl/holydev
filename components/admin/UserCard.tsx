@@ -1,6 +1,5 @@
 import React from "react";
-import { UserAvatar } from "../utils/UserAvatar";
-import Image from "next/image";
+
 
 export type UserProps = {
    name: string;

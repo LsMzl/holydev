@@ -1,7 +1,7 @@
 import HousesList from "@/components/home/HousesList";
 
 import { getAllHouses } from "../../queries/getAllHouses";
-import LocationFilter from "@/components/navigation/LocationFilter";
+import CategoryFilters from "@/components/home/CategoryFilters";
 
 interface HousesProps {
    searchParams: {
@@ -18,7 +18,8 @@ export default async function Home({ searchParams }: HousesProps) {
    if (!houses) return <div>Aucune annonce trouvée</div>;
    return (
       <>
-         <LocationFilter />
+         <CategoryFilters />
+
          <HousesList houses={houses} />
       </>
    );
