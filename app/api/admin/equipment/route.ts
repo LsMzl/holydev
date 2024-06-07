@@ -1,5 +1,5 @@
 /**
- * Route en POST permettant de créer une nouvelle catégorie.
+ * Route en POST permettant de créer de nouveaux équipements.
  * Récupération des informations de la catégorie depuis le body.
  * Formulaire réservé administateur.
  * @creation 07.06.2024 - Louis Mazzella
@@ -20,15 +20,15 @@ export async function POST(req: Request) {
          return new NextResponse("Non autorisé", { status: 401 });
       }
 
-      const category = await db.category.create({
+      const equipment = await db.equipment.create({
          data: {
             ...body,
          },
       });
 
-      return NextResponse.json(category);
+      return NextResponse.json(equipment);
    } catch (error) {
-      console.log("Error at api/admin/category POST", error);
+      console.log("Error at api/admin/equipment POST", error);
       return new NextResponse("Internal server error", { status: 500 });
    }
 }

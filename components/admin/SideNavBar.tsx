@@ -7,12 +7,15 @@ import { Button } from "../ui/button";
 
 // Icons
 import {
+   Archive,
    ChevronLeft,
    ChevronRight,
    LayoutDashboard,
+   MessageSquareText,
    MessagesSquare,
    Settings,
    ShoppingCart,
+   Tag,
    Users2,
 } from "lucide-react";
 
@@ -55,12 +58,30 @@ const SideNavBar = () => {
                   variant: "ghost",
                   href: "/dashboard/users",
                },
+               {
+                  title: "Commentaires",
+                  icon: MessageSquareText,
+                  variant: "ghost",
+                  href: "/dashboard/comments",
+               },
 
                {
                   title: "Réservations",
                   icon: ShoppingCart,
                   variant: "ghost",
                   href: "/dashboard/orders",
+               },
+               {
+                  title: "Catégories",
+                  icon: Tag,
+                  variant: "ghost",
+                  href: "/dashboard/categories",
+               },
+               {
+                  title: "Equipements",
+                  icon: Archive,
+                  variant: "ghost",
+                  href: "/dashboard/equipements",
                },
                {
                   title: "Annonces",

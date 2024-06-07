@@ -1,5 +1,5 @@
 /**
- * Fichier contenant les méthodes permattent la mise à jour et la supression d'une annonce.
+ * Fichier contenant les méthodes permattent la mise à jour et la suppression d'une annonce.
  * 1 Méthode PATCH pour la mise à jour.
  * 1 Méthode DELETE pour la supression.
  * @creation 02.06.2024 Louis Mazzella

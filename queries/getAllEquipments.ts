@@ -1,9 +1,9 @@
 import { db } from "@/lib/db";
 
-export const getAllCategories = async () => {
+export const getAllEquipments = async () => {
    try {
-      const categories = await db.category.findMany();
-      return categories;
+      const equipments = await db.equipment.findMany();
+      return equipments;
    } catch (error: any) {
       console.log("error >>", error);
       throw new Error(error);
