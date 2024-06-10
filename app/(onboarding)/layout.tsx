@@ -5,6 +5,9 @@ import "../globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 import { cn } from "@/lib/utils";
+import Responsive from "@/components/utils/Responsive";
+import { Toaster } from "@/components/ui/toaster";
+import { ClerkProvider } from "@clerk/nextjs";
 
 export const metadata = {
    title: "Next.js",
@@ -17,8 +20,18 @@ export default function OnboardingLayout({
    children: React.ReactNode;
 }) {
    return (
-      <html lang="fr">
-         <body className={cn("flex justify-center h-screen items-center", inter.className)}>{children}</body>
-      </html>
+      <ClerkProvider>
+         <html lang="fr">
+            <body
+               className={cn(
+                  "flex justify-center h-screen items-center",
+                  inter.className
+               )}
+            >
+               {children}
+               <Toaster />
+            </body>
+         </html>
+      </ClerkProvider>
    );
 }

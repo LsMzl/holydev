@@ -38,7 +38,7 @@ const OnboardingNav = ({
          <div
             className={clsx(
                // Dernière étape
-               previous && !next && "justify-start",
+               previous && !next && "justify-center",
                // Première étape
                !previous && next && "justify-end",
                // Etapes intermédiaires
@@ -75,6 +75,7 @@ const OnboardingNav = ({
                   disabled={isLoading}
                   className="w-[110px] group"
                   onClick={() => next()}
+                  type="button"
                >
                   {isLoading ? (
                      // Pendant le chargement

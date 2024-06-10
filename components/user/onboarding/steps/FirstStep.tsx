@@ -19,6 +19,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, Mail, Phone } from "lucide-react";
 import { PasswordInput } from "@/components/ui/passwordInput";
 import { ComponentsProps } from "@/types/onboardingTypes";
+import { useState } from "react";
+import axios from "axios";
+import { toast } from "@/components/ui/use-toast";
+import { User } from "@prisma/client";
+
+interface FirstStepProps {
+   user: User | null;
+}
 
 const formSchema = z.object({
    firstName: z.string().min(2, {
@@ -41,36 +49,64 @@ const formSchema = z.object({
    }),
 });
 
-const FirstStep = ({
-   next,
-   previous,
-   isFirstStep,
-   isFinalStep,
-   stepsList,
-   getCurrentStep,
-}: ComponentsProps) => {
+const FirstStep = (
+   {
+      next,
+      previous,
+      isFirstStep,
+      isFinalStep,
+      stepsList,
+      getCurrentStep,
+   }: ComponentsProps,
+   { user }: FirstStepProps
+) => {
+   const [isLoading, setIsLoading] = useState(false);
+
    const form = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
       defaultValues: {
-         firstName: "",
-         lastName: "",
-         pseudo: "",
-         email: "",
-         phone: "",
-         password: "",
+         firstName: user?.firstName || "",
+         lastName: user?.lastName || "",
+         pseudo: user?.pseudo || "",
+         email: user?.email || "",
+         phone: user?.phone || "",
+         password: user?.password || "",
       },
    });
+
+   function onSubmit(values: z.infer<typeof formSchema>) {
+      setIsLoading(true);
+      axios
+         .post("/api/user/onboarding", values)
+         .then((res) => {
+            toast({
+               variant: "success",
+               description: "Super, plus qu'une étape !",
+            });
+            setIsLoading(false);
+            next();
+         })
+         .catch((error) => {
+            console.log(error);
+            toast({
+               variant: "destructive",
+               description: "Une erreur s'est produite",
+            });
+            setIsLoading(false);
+         });
+   }
+
    return (
-      <section className=" flex gap-5">
+      <section className="flex flex-col md:flex-row md:mx-10 md:gap-5 mx-4 lg:mx-0">
          {/* Left section */}
-         <div className="">
-            <div className="w-[440px] m-auto ">
-               <h1 className="text-4xl font-medium mb-3">
+         <div className="mb-3 md:mb-6 lg:mb-0">
+            <div className=" md:w-[350px] m-auto ">
+               <h1 className=" text-center md:text-start text-3xl md:text-4xl font-medium mb-3">
                   Avant tout, <br /> Qui êtes-vous ?
                </h1>
                <p className="text-sm">
                   Lorem, ipsum dolor sit amet consectetur adipisicing elit. Rem
-                  consequatur impedit adipisci ab, cupiditate maiores.
+                  consequatur impedit adipisci ab, cupidite.
                </p>
             </div>
 
@@ -79,7 +115,7 @@ const FirstStep = ({
          {/* Right section */}
          <div className="">
             <Form {...form}>
-               <form className="space-y-5 mb-10">
+               <form className="space-y-3 md:space-y-5 mb-5 md:mb-10">
                   {/* Nom et prénom */}
                   <div className="grid grid-cols-2 gap-5">
                      <FormField
@@ -198,13 +234,13 @@ const FirstStep = ({
                         </FormItem>
                      )}
                   />
+                  <OnboardingNav
+                     next={form.handleSubmit(onSubmit)}
+                     previous={previous}
+                     isFirstStep={isFirstStep}
+                     isFinalStep={isFinalStep}
+                  />
                </form>
-               <OnboardingNav
-                  next={next}
-                  previous={previous}
-                  isFirstStep={isFirstStep}
-                  isFinalStep={isFinalStep}
-               />
             </Form>
          </div>
       </section>

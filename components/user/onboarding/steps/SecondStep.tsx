@@ -19,12 +19,14 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageInput } from "@/components/ui/imageInput";
 import { ComponentsProps } from "@/types/onboardingTypes";
+import { toast } from "@/components/ui/use-toast";
+import { useAuth, useUser } from "@clerk/nextjs";
 
 const formSchema = z.object({
    profilePicture: z.string().optional(),
    biography: z.string().optional(),
-   interests: z.array(z.string()).optional(),
-   languages: z.array(z.string()).optional(),
+   interests: z.string().optional(),
+   languages: z.string().optional(),
 });
 
 const SecondStep = ({
@@ -40,133 +42,183 @@ const SecondStep = ({
       defaultValues: {
          profilePicture: "",
          biography: "",
-         interests: [],
-         languages: [],
+         interests: "",
+         languages: "",
       },
    });
+
+   const { user } = useUser();
+   const userEmail = user?.emailAddresses[0].emailAddress;
+
+   // States
+   const [isLoading, setIsLoading] = useState<boolean>(false);
+
    /** Progression du téléchargement */
    const [uploadProgress, setUploadProgress] = useState<number>(0);
+   /**- Etat de sélection de l'image, null par défaut */
+   const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
    /**- Stockage de l'image, null par défaut */
    const [imagePreview, setImagePreview] = useState<
       string | ArrayBuffer | null
    >(null);
 
-   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {};
+   /** Affichage de l'image selectionnée par l'utilisateur.*/
+   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      const fileTypes = ["jpg", "jpeg", "gif", "webp"];
+
+      //? Fichier existant
+      if (file) {
+         setSelectedImage(file);
+         // Vérification de l'extension du fichier
+         let fileExtension = file?.name.split(".").pop()?.toLocaleLowerCase();
+         const isSuccess = fileTypes.indexOf(fileExtension || "") > -1;
+
+         //! Extension non valide
+         if (!isSuccess) {
+            toast({
+               variant: "destructive",
+               title: "Extension de fichier non valide",
+               description: "Veuillez sélectionner un fichier valide",
+            });
+            return null;
+         }
+
+         //* Extension valide
+         // Lecture du fichier
+         const reader = new FileReader();
+         reader.onload = (event) => {
+            let imageDataUrl: string | ArrayBuffer | null = null;
+            //? Fichier existant
+            if (event.target) {
+               imageDataUrl = event.target.result;
+            }
+            setImagePreview(imageDataUrl);
+            toast({
+               variant: "success",
+               description: "Image chargée avec succès !",
+            });
+         };
+         reader.readAsDataURL(file);
+      }
+   };
+
+   function onSubmit(values: z.infer<typeof formSchema>) {
+      console.log("values >>", values);
+      // next();
+   }
 
    return (
-      <section>
-         <div className="flex gap-5">
-            {/* Left section */}
-            <div className="">
-               <div className="w-[440px] m-auto ">
-                  <h1 className="text-4xl font-medium mb-3">
-                     Faisons un peu plus connaissance
-                  </h1>
-                  <p className="text-sm">
-                     Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                     Rem consequatur impedit adipisci ab, cupiditate maiores.
-                  </p>
-               </div>
-
-               <OnboardingNav />
+      <section className="flex flex-col md:flex-row md:mx-10 md:gap-5 mx-4">
+         {/* Left section */}
+         <div className="mb-3 md:mb-0">
+            <div className="md:w-[360px] m-auto ">
+               <h1 className=" text-center md:text-start text-3xl md:text-4xl font-medium mb-3">
+                  Faisons un peu plus connaissance
+               </h1>
+               <p className="text-sm">
+                  Lorem, ipsum dolor sit amet consectetur adipisicing elit. Rem
+                  consequatur impedit adipisci ab, cupidite.
+               </p>
             </div>
-            {/* Right section */}
-            <div className="">
-               <Form {...form}>
-                  <form className="space-y-5 mb-10">
-                     {/* Avatar */}
-                     <FormField
-                        control={form.control}
-                        name="profilePicture"
-                        render={({ field }) => (
-                           <FormItem>
-                              <FormLabel>
-                                 Photo de profil{" "}
-                                 <span className="text-red-500">*</span>
-                              </FormLabel>
-                              <FormControl>
-                                 <ImageInput
-                                    {...field}
-                                    handleImageSelect={handleImageSelect}
-                                    imagePreview={imagePreview}
-                                    uploadProgress={uploadProgress}
-                                 />
-                              </FormControl>
-                              <FormMessage />
-                           </FormItem>
-                        )}
-                     />
+         </div>
+         {/* Right section */}
+         <div className="md:w-[400px]">
+            <Form {...form}>
+               <form className="space-y-3 md:space-y-5 mb-5 md:mb-10">
+                  {/* Avatar */}
+                  <FormField
+                     control={form.control}
+                     name="profilePicture"
+                     render={({ field }) => (
+                        <FormItem>
+                           <FormLabel>
+                              Photo de profil{" "}
+                              <span className="text-red-500">*</span>
+                           </FormLabel>
+                           <FormControl>
+                              <ImageInput
+                                 {...field}
+                                 handleImageSelect={handleImageSelect}
+                                 imagePreview={imagePreview}
+                                 uploadProgress={uploadProgress}
+                                 disabled={isLoading}
+                                 userMail={userEmail}
+                              />
+                           </FormControl>
+                           <FormMessage />
+                        </FormItem>
+                     )}
+                  />
 
-                     {/* Biography */}
-                     <FormField
-                        control={form.control}
-                        name="biography"
-                        render={({ field }) => (
-                           <FormItem>
-                              <FormLabel>
-                                 Biographie{" "}
-                                 <span className="text-red-500">*</span>
-                              </FormLabel>
-                              <FormDescription>
-                                 Dîtes aux autres utilisateurs qui vous-êtes
-                              </FormDescription>
-                              <FormControl>
-                                 <Textarea></Textarea>
-                              </FormControl>
-                              <FormMessage />
-                           </FormItem>
-                        )}
-                     />
-                     {/* Interests */}
-                     <FormField
-                        control={form.control}
-                        name="interests"
-                        render={({ field }) => (
-                           <FormItem>
-                              <FormLabel>
-                                 Centres d'interêts{" "}
-                                 <span className="text-red-500">*</span>
-                              </FormLabel>
-                              <FormControl>
-                                 <Input
-                                    placeholder="Voyages, lectures..."
-                                    {...field}
-                                 />
-                              </FormControl>
-                              <FormMessage />
-                           </FormItem>
-                        )}
-                     />
-                     {/* Languages */}
-                     <FormField
-                        control={form.control}
-                        name="languages"
-                        render={({ field }) => (
-                           <FormItem>
-                              <FormLabel>
-                                 Langues parlées{" "}
-                                 <span className="text-red-500">*</span>
-                              </FormLabel>
-                              <FormControl>
-                                 <Input
-                                    placeholder="Français, Anglais..."
-                                    {...field}
-                                 />
-                              </FormControl>
-                              <FormMessage />
-                           </FormItem>
-                        )}
-                     />
-                  </form>
+                  {/* Biography */}
+                  <FormField
+                     control={form.control}
+                     name="biography"
+                     render={({ field }) => (
+                        <FormItem>
+                           <FormLabel>
+                              Biographie <span className="text-red-500">*</span>
+                           </FormLabel>
+                           <FormDescription>
+                              Dîtes aux autres utilisateurs qui vous-êtes
+                           </FormDescription>
+                           <FormControl>
+                              <Textarea></Textarea>
+                           </FormControl>
+                           <FormMessage />
+                        </FormItem>
+                     )}
+                  />
+                  {/* Interests */}
+                  <FormField
+                     control={form.control}
+                     name="interests"
+                     render={({ field }) => (
+                        <FormItem>
+                           <FormLabel>
+                              Centres d'interêts{" "}
+                              <span className="text-red-500">*</span>
+                           </FormLabel>
+                           <FormControl>
+                              <Input
+                                 placeholder="Voyages, lectures..."
+                                 {...field}
+                              />
+                           </FormControl>
+                           <FormMessage />
+                        </FormItem>
+                     )}
+                  />
+                  {/* Languages */}
+                  <FormField
+                     control={form.control}
+                     name="languages"
+                     render={({ field }) => (
+                        <FormItem>
+                           <FormLabel>
+                              Langues parlées{" "}
+                              <span className="text-red-500">*</span>
+                           </FormLabel>
+                           <FormControl>
+                              <Input
+                                 placeholder="Français, Anglais..."
+                                 {...field}
+                              />
+                           </FormControl>
+                           <FormMessage />
+                        </FormItem>
+                     )}
+                  />
                   <OnboardingNav
-                     next={next}
+                     next={form.handleSubmit(onSubmit)}
                      previous={previous}
                      isFirstStep={isFirstStep}
                      isFinalStep={isFinalStep}
                   />
-               </Form>
-            </div>
+               </form>
+            </Form>
          </div>
       </section>
    );

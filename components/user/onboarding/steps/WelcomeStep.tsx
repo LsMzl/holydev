@@ -12,7 +12,7 @@ const WelcomeStep = ({
    return (
       <section className="w-full h-screen flex items-center justify-center">
          <div className="flex flex-col justify-center items-center">
-            <h1 className="text-6xl font-medium text-center">
+            <h1 className=" text-3xl md:text-5xl lg:text-6xl font-medium text-center">
                Bienvenue sur Holydevs !
             </h1>
             <p className="mb-5">Le réseau social entre propriétaires</p>
