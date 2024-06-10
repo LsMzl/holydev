@@ -7,9 +7,9 @@ import { ColumnDef } from "@tanstack/react-table";
 // You can use a Zod schema here if you want.
 export type Category = {
    name: string;
-   bgColor?: string | null;
    image?: string | null;
    createdAt?: string;
+   updatedAt?: string;
 };
 
 export const columns: ColumnDef<Category>[] = [
@@ -20,10 +20,6 @@ export const columns: ColumnDef<Category>[] = [
    {
       accessorKey: "image",
       header: "Logo",
-   },
-   {
-      accessorKey: "bgColor",
-      header: "color",
    },
    {
       accessorKey: "createdAt",

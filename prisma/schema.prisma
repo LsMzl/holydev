@@ -19,9 +19,14 @@ model User {
   // Informations
   firstName        String?
   lastName         String?
-  phone            String?
+  pseudo           String?  @unique
+  phone            String?  @unique
   profilePicture   String?
   coverPicture     String?
+  // Informations complémentaires
+  biography        String?  @db.LongText
+  interests        String? 
+  languages        String?
   // Identifiants
   email            String   @unique
   password         String
@@ -30,11 +35,12 @@ model User {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
-  // houses            House[]
+  isOnboardingCompleted Boolean @default(false)
+
   Sessions          Session[]
   VerificationToken VerificationToken[]
   // Avis client
-  Opinions          Opinion[]
+  // Opinions          Opinion[]
 }
 
 model Session {
@@ -58,60 +64,69 @@ model VerificationToken {
 }
 
 model House {
-  id          String    @id @default(uuid())
+  id          String   @id @default(uuid())
   // Localisation
   country     String
   state       String
   city        String
   address     String
   // Création, modification
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @default(now())
-  // Disponibilité
-  available   Boolean   @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
   // Informations
-  title       String?   @db.Text
+  title       String?  @db.Text
   image       String
-  description String?   @db.LongText
-  ownerId String
+  description String?  @db.LongText
   // Propriétaire
+  ownerId     String
 
-  price Int
-  // owner       User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  // ownerId     String
+  price      Int
   // Équipements etc...
-  // categories  Category  @relation(fields: [categoryId], references: [id])
-  // categoryId  String
+  categories CategoriesOnHouses[]
   // equipments  Equipment @relation(fields: [equipmentId], references: [id])
   // equipmentId String
   // features    Feature   @relation(fields: [featureId], references: [id])
   // featureId   String
   // Avis client
-  Opinions    Opinion[]
+  // Opinions    Opinion[]
 
   // Réservations
+  //! Une maison peut avoir plusieurs réservations
   bookings Booking[]
 
   // @@index([ownerId])
 }
 
-model Opinion {
-  id       String @id @default(uuid())
-  author   User   @relation(fields: [authorId], references: [id])
-  authorId String
-  house    House  @relation(fields: [houseId], references: [id], onDelete: Cascade)
-  houseId  String
+// model Opinion {
+//   id       String @id @default(uuid())
+//   author   User   @relation(fields: [authorId], references: [id])
+//   authorId String
+//   house    House  @relation(fields: [houseId], references: [id], onDelete: Cascade)
+//   houseId  String
 
-  @@index([authorId])
-  @@index([houseId])
-}
+//   @@index([authorId])
+//   @@index([houseId])
+// }
 
 model Category {
-  id      String  @id @default(uuid())
-  name    String
-  bgColor String?
-  image   String?
-  // house   House[]
+  id        String               @id @default(uuid())
+  name      String
+  image     String?
+  // Création, modification
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @default(now())
+  // Maisons
+  houses    CategoriesOnHouses[]
+}
+
+//! Many to many entre catégories et maisons
+model CategoriesOnHouses {
+  house      House    @relation(fields: [houseId], references: [id])
+  houseId    String
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String
+
+  @@id([houseId, categoryId])
 }
 
 model Equipment {
@@ -121,12 +136,12 @@ model Equipment {
   // house House[]
 }
 
-model Feature {
-  id       String @id @default(uuid())
-  name     String
-  quantity Int
-  // house    House[]
-}
+// model Feature {
+//   id       String @id @default(uuid())
+//   name     String
+//   quantity Int
+//   house    House[]
+// }
 
 model Booking {
   id              String   @id @default(uuid())
@@ -135,15 +150,16 @@ model Booking {
   userId          String
   userEmail       String
   // Maison réservée
+  //! Une réservation n'a qu'une seule maison
   House           House?   @relation(fields: [houseId], references: [id], onDelete: Cascade)
   houseId         String?
   // Propriétaire de la maison
   houseOwnerId    String
   // Dates de la réservation
   startDate       DateTime
-  endDate        DateTime
+  endDate         DateTime
   // Devise
-  currency        String   @default("Français")
+  currency        String   @default("Euro")
   // Prix et status du paiement
   totalPrice      Int
   paymentStatus   Boolean  @default(false)

@@ -3,40 +3,44 @@ import AddHouseForm from "@/components/forms/house/AddHouseForm";
 import { Typography } from "@/components/ui/design-system/Typography";
 import { auth } from "@clerk/nextjs/server";
 import React from "react";
+import { getAllCategories } from "@/queries/getAllCategories";
+import Container from "@/components/elements/Container";
 
 interface HousePageProps {
-  params: {
-    annonceId: string;
-  };
+   params: {
+      annonceId: string;
+   };
 }
 
 const House = async ({ params }: HousePageProps) => {
-  // Check if the house doesn't exist
-  const house = await getHouseById(params.annonceId);
-  // Session user id
-  const { userId } = auth();
+   // Check if the house doesn't exist
+   const house = await getHouseById(params.annonceId);
 
-  if (!userId) {
-    return (
-      <Typography variant="h3" balise="h2">
-        Vous n'êtes pas connecté.
-      </Typography>
-    );
-  }
+   const categories = await getAllCategories();
+   // Session user id
+   const { userId } = auth();
 
-  if (house && house.ownerId !== userId) {
-    return (
-      <Typography variant="h3" balise="h2">
-        Accès refusé.
-      </Typography>
-    );
-  }
+   if (!userId) {
+      return (
+         <Typography variant="h3" balise="h2">
+            Vous n'êtes pas connecté.
+         </Typography>
+      );
+   }
 
-  return (
-    <div>
-      <AddHouseForm house={house} />
-    </div>
-  );
+   if (house && house.ownerId !== userId) {
+      return (
+         <Typography variant="h3" balise="h2">
+            Accès refusé.
+         </Typography>
+      );
+   }
+
+   return (
+      <Container>
+         <AddHouseForm house={house} categories={categories} />
+      </Container>
+   );
 };
 
 export default House;

@@ -19,7 +19,7 @@ const AnnonceDetails = async ({ params }: HouseDetailsProps) => {
   if (!house) return <div>Oups, l'annonce n'a pas été trouvée</div>;
 
   /** Contient toutes les réservations d'une maison */
-  const bookings = await getBookings(house?.id ?? "");
+  const bookings = await getBookings(house?.id);
 
   return <HouseDetails house={house} bookings={bookings} />;
 };

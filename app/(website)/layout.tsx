@@ -36,10 +36,7 @@ export default function RootLayout({
                >
                   {/* <Responsive /> */}
                   <TopNav />
-                  <div className="flex">
-                     <SideNav />
-                     <div className="w-full mx-5 pt-2">{children}</div>
-                  </div>
+                  {children}
                   <Toaster />
                </ThemeProvider>
             </body>

@@ -23,9 +23,9 @@ const page = async ({ params }: ProfilPageProps) => {
    const userEmail = user?.emailAddresses[0].emailAddress;
 
    return (
-      <Container className="max-w-7xl">
+      <Container className="max-w-7xl mx-auto">
          {/* Cover picture & informations */}
-         <section >
+         <section>
             {/* Cover picture */}
             <div className="h-[200px] lg:h-[400px] relative ">
                {/* //TODO Image par défaut si non renseignée */}
@@ -46,7 +46,7 @@ const page = async ({ params }: ProfilPageProps) => {
                      />
                   </Avatar>
                   {/* Name, Hashtag */}
-                  <div className="flex flex-col items-center pb-5">
+                  <div className="flex flex-col items-start pb-5">
                      <p className="font-semibold text-3xl">Louis Mazzella</p>
                      <p>@ls_mzl</p>
                   </div>
@@ -84,12 +84,29 @@ const page = async ({ params }: ProfilPageProps) => {
                      <p className="text-sm">Avis</p>
                   </span>
                </div>
-               <div className="border rounded bg-card w-full p-2">
-                <p className="text-sm font-medium">Mes connexions</p>
-
+               <div className="border rounded bg-card w-full p-3 flex flex-col gap-3">
+                  <div>
+                     <p className="font-medium mb-2">Biographie</p>
+                     {/* //TODO: Bio ou bouton ajouter biographie */}
+                     <p className="text-sm leading-4">
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                        Veniam, explicabo nesciunt animi odit praesentium quia.
+                     </p>
+                  </div>
+                  <div>
+                     <p className="font-medium">Mes connexions</p>
+                  </div>
                </div>
             </aside>
-            <div className="w-[75%]  bg-blue-300">ghdfh</div>
+            <div className="w-[75%] flex flex-col gap-5">
+               <div className="bg-card rounded border h-24">ghdfh</div>
+               {/* Publications */}
+               <div>
+                  <p className="text-xl text-medium bg-card rounded border h-24">
+                     Publications
+                  </p>
+               </div>
+            </div>
          </section>
       </Container>
    );

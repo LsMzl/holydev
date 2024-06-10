@@ -4,7 +4,7 @@ import Chart from "@/components/admin/Chart";
 import PageTitle from "@/components/admin/PageTitle";
 import UserCard from "@/components/admin/UserCard";
 import { cardData } from "@/components/admin/data/cardData";
-import { userData } from "@/components/admin/data/userData";
+// import { userData } from "@/components/admin/data/userData";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
 
@@ -33,9 +33,9 @@ export default function Dashboard() {
             <CardContent>
                <p className="font-medium">Dernières inscriptions</p>
                <p className="text-xs text-gray-400">295 nouveaux inscrits ce mois-ci</p>
-               {userData.map((user) => (
+               {/* {userData.map((user) => (
                   <UserCard key={uuidv4()} email={user.email} name={user.name}/>
-               ))}
+               ))} */}
             </CardContent>
          </section>
       </div>
