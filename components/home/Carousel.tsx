@@ -19,6 +19,7 @@ interface CategoryFiltersProps {
 }
 
 const CategoriesCarousel = ({ category }: CategoryFiltersProps) => {
+   
    return (
       <Container>
          <Carousel

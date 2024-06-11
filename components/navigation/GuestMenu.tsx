@@ -11,13 +11,6 @@ import { Menu } from "lucide-react";
 import React from "react";
 import { Button } from "../ui/button";
 import Link from "next/link";
-import {
-   ClerkProvider,
-   SignInButton,
-   SignedIn,
-   SignedOut,
-   UserButton,
-} from "@clerk/nextjs";
 
 export const GuestMenu = () => {
    return (
@@ -43,7 +36,7 @@ export const GuestMenu = () => {
                </DropdownMenuItem>
 
                <DropdownMenuItem>
-               <Link href="/sign-in">Connexion</Link>
+                  <Link href="/sign-in">Connexion</Link>
                </DropdownMenuItem>
             </DropdownMenuGroup>
          </DropdownMenuContent>

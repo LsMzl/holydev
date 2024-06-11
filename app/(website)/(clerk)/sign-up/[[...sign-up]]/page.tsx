@@ -1,10 +1,11 @@
 import Container from "@/components/elements/Container";
 import { SignUp } from "@clerk/nextjs";
 
-export default function Page() {
+
+export default function RegisterPage() {
   return (
-    <Container className="max-w-[300px] mt-10">
-      <SignUp />
+    <Container className="mt-10">
+      <SignUp/>
     </Container>
   );
 }

@@ -14,7 +14,7 @@ import OnboardingView from "./Onboarding.view";
 const OnboardingContainer = () => {
    /** --ETAPES DE L'ONBOARDING-- **/
 
-   const [currentStep, setCurrentStep] = useState<number>(4);
+   const [currentStep, setCurrentStep] = useState<number>(1);
 
    const stepsList: OnboardingStepsListInterface[] = [
       { id: 1, label: "Welcome", component: { step: WelcomeStep } },
@@ -63,7 +63,7 @@ const OnboardingContainer = () => {
          isFinalStep={isFinalStep}
          stepsList={stepsList}
       />
-   );;
+   );
 };
 
 export default OnboardingContainer;

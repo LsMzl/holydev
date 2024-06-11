@@ -88,7 +88,7 @@ const SideNav = ({
                   />
                </Avatar>
                <p className="font-semibold capitalize">{userFirstName} {userLastName}</p>
-               <p className="text-sm">@{username}</p>
+               <p className="text-sm">{username}</p>
             </div>
             {/* Followers */}
             <div className="rounded flex py-2 px-2 xl:px-5 text-xs justify-between bg-card">

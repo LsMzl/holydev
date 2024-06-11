@@ -3,14 +3,14 @@ import { Inter } from "next/font/google";
 import "../globals.css";
 
 import { ClerkProvider } from "@clerk/nextjs";
-import { NavBar } from "@/components/navigation/NavBar";
 import { ThemeProvider } from "@/components/provider/theme/ThemeProvider";
 import { Toaster } from "@/components/ui/toaster";
-import Spacing from "@/components/elements/Spacing";
 import Responsive from "@/components/utils/Responsive";
 import { cn } from "@/lib/utils";
-import SideNav from "@/components/navigation/SideNav";
 import TopNav from "@/components/navigation/TopNav";
+import { auth } from "@clerk/nextjs/server";
+import { getUserByClerkId } from "@/queries/getUserByClerkId";
+import { shouldRedirectToOnboarding } from "@/components/utils/isUserInDatabase";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,6 +24,16 @@ export default async function RootLayout({
 }: Readonly<{
    children: React.ReactNode;
 }>) {
+   // Informations utilisateur
+   const { userId } = auth();
+   const user = await getUserByClerkId(userId ?? "");
+
+   shouldRedirectToOnboarding(
+      userId ?? "",
+      user?.clerkId ?? "",
+      user?.isOnboardingCompleted ?? false
+   );
+
    return (
       <ClerkProvider>
          <html lang="fr" suppressHydrationWarning>
