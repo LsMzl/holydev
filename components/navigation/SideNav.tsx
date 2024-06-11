@@ -22,6 +22,14 @@ interface SideNavProps {
    href: string;
 }
 
+type sideNavUserInfosProps = {
+   userMail: string | undefined;
+   userAvatar: string | undefined | null;
+   userFirstName: string | undefined | null;
+   userLastName: string | undefined | null;
+   username: string | undefined | null;
+};
+
 const sideNavLinks: SideNavProps[] = [
    {
       title: "Mes annonces",
@@ -49,11 +57,16 @@ const sideNavLinks: SideNavProps[] = [
    },
 ];
 
-const SideNav = () => {
+const SideNav = ({
+   userMail,
+   userAvatar,
+   userFirstName,
+   userLastName,
+   username,
+}: sideNavUserInfosProps) => {
    const pathname = usePathname();
 
    const { user } = useUser();
-   const userEmail = user?.emailAddresses[0].emailAddress;
 
    return (
       <aside
@@ -66,11 +79,16 @@ const SideNav = () => {
             <div className="text-center mb-5">
                <Avatar className="hidden sm:block ml-1 bg-gray-200 h-20 w-20 relative left-[50%] -translate-x-[50%] border-2 border-red-600">
                   <AvatarImage
-                     src={`https://api.dicebear.com/6.x/fun-emoji/svg?seed=${userEmail}`}
+                     className="object-cover"
+                     src={
+                        userAvatar
+                           ? userAvatar
+                           : `https://api.dicebear.com/6.x/fun-emoji/svg?seed=${userMail}`
+                     }
                   />
                </Avatar>
-               <p className="font-semibold">Louis Mazzella</p>
-               <p className="text-sm">@ls_mzl</p>
+               <p className="font-semibold capitalize">{userFirstName} {userLastName}</p>
+               <p className="text-sm">@{username}</p>
             </div>
             {/* Followers */}
             <div className="rounded flex py-2 px-2 xl:px-5 text-xs justify-between bg-card">

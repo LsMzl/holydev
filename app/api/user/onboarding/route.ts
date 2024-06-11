@@ -24,6 +24,7 @@ export async function POST(req: Request) {
       // Création de l'utilisateur dans la base de données
       const user = await db.user.create({
          data: {
+            clerkId: userId,
             ...body,
          },
       });
@@ -35,6 +36,30 @@ export async function POST(req: Request) {
    }
 }
 
-export async function PATCH() {
-	
+export async function PATCH(req: Request) {
+   try {
+      // Récuperarion des informations depuis le body.
+      const body = await req.json();
+      // Récupération de l'id de l'utilisateur connecté.
+      const { userId } = auth();
+
+      //! Pas d'utilisateur connecté
+      if (!userId) {
+         return new NextResponse("Non autorisé", { status: 401 });
+      }
+
+      const user = await db.user.update({
+         where: {
+            clerkId: userId,
+         },
+         data: {
+            ...body,
+         },
+      });
+
+      return NextResponse.json(user);
+   } catch (error) {
+      console.log("Error at api/user/onboarding PATCH", error);
+      return new NextResponse("Internal server error", { status: 500 });
+   }
 }

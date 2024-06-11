@@ -10,6 +10,10 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { currentUser } from "@clerk/nextjs/server";
 
 import Link from "next/link";
+import { getUserByClerkId } from "@/queries/getUserByClerkId";
+import { Dialog } from "@/components/ui/dialog";
+import { DialogTrigger } from "@radix-ui/react-dialog";
+import BiographyPopUpForm from "@/components/forms/user/BiographyPopUpForm";
 
 interface ProfilPageProps {
    params: {
@@ -17,10 +21,7 @@ interface ProfilPageProps {
    };
 }
 const page = async ({ params }: ProfilPageProps) => {
-   const userDb = await getUserById(params.userId);
-
-   const user = await currentUser();
-   const userEmail = user?.emailAddresses[0].emailAddress;
+   const user = await getUserByClerkId(params.userId);
 
    return (
       <Container className="max-w-7xl mx-auto">
@@ -40,15 +41,22 @@ const page = async ({ params }: ProfilPageProps) => {
             <div className="flex justify-between mx-10">
                <div className="flex items-end relative -top-10 gap-2">
                   {/* Avatar */}
-                  <Avatar className="bg-gray-400 w-24 h-24 md:w-32 md:h-32 border-4 border-blue-400 drop-shadow-lg">
+                  <Avatar className="bg-gray-400 w-24 h-24 md:w-32 md:h-32 border-2 border-blue-400 drop-shadow-lg">
                      <AvatarImage
-                        src={`https://api.dicebear.com/6.x/fun-emoji/svg?seed=${user?.emailAddresses}`}
+                        className="object-cover"
+                        src={
+                           user?.profilePicture
+                              ? user?.profilePicture
+                              : `https://api.dicebear.com/6.x/fun-emoji/svg?seed=${user?.email}`
+                        }
                      />
                   </Avatar>
                   {/* Name, Hashtag */}
                   <div className="flex flex-col items-start pb-5">
-                     <p className="font-semibold text-3xl">Louis Mazzella</p>
-                     <p>@ls_mzl</p>
+                     <p className="font-semibold text-3xl">
+                        {user?.firstName} {user?.lastName}
+                     </p>
+                     <p>@{user?.pseudo}</p>
                   </div>
                </div>
                {/* Menu 1 */}
@@ -85,14 +93,29 @@ const page = async ({ params }: ProfilPageProps) => {
                   </span>
                </div>
                <div className="border rounded bg-card w-full p-3 flex flex-col gap-3">
+                  {/* Biographie */}
                   <div>
                      <p className="font-medium mb-2">Biographie</p>
                      {/* //TODO: Bio ou bouton ajouter biographie */}
                      <p className="text-sm leading-4">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Veniam, explicabo nesciunt animi odit praesentium quia.
+                        {user?.biography ? (
+                           user?.biography
+                        ) : (
+                           <BiographyPopUpForm />
+                        )}
                      </p>
                   </div>
+                  {/* Centres d'intêrets */}
+                  <div>
+                     <p className="font-medium mb-2">Centres d'intêrets</p>
+                     <p className="text-sm">{user?.interests}</p>
+                  </div>
+                  {/* Langues parlées */}
+                  <div>
+                     <p className="font-medium mb-2">Langues parlées</p>
+                     <p className="text-sm">{user?.languages}</p>
+                  </div>
+                  {/* Connexions */}
                   <div>
                      <p className="font-medium">Mes connexions</p>
                   </div>

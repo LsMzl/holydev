@@ -20,7 +20,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { ImageInput } from "@/components/ui/imageInput";
 import { ComponentsProps } from "@/types/onboardingTypes";
 import { toast } from "@/components/ui/use-toast";
-import { useAuth, useUser } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
+import axios from "axios";
 
 const formSchema = z.object({
    profilePicture: z.string().optional(),
@@ -66,7 +67,7 @@ const SecondStep = ({
    /** Affichage de l'image selectionnée par l'utilisateur.*/
    const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
-      const fileTypes = ["jpg", "jpeg", "gif", "webp"];
+      const fileTypes = ["jpg", "jpeg", "gif", "webp", "png", "svg"];
 
       //? Fichier existant
       if (file) {
@@ -95,18 +96,33 @@ const SecondStep = ({
                imageDataUrl = event.target.result;
             }
             setImagePreview(imageDataUrl);
-            toast({
-               variant: "success",
-               description: "Image chargée avec succès !",
-            });
          };
          reader.readAsDataURL(file);
       }
    };
 
    function onSubmit(values: z.infer<typeof formSchema>) {
-      console.log("values >>", values);
-      // next();
+      // Récupération de l'image uploadée
+      values.profilePicture = imagePreview?.toString();
+      setIsLoading(true);
+      axios
+         .patch(`api/user/onboarding`, values)
+         .then((res) => {
+            toast({
+               variant: "success",
+               description: "Yeah, vos informations ont bien été enregistrées!",
+            });
+            setIsLoading(false);
+            next();
+         })
+         .catch((error) => {
+            console.log(error);
+            toast({
+               variant: "destructive",
+               description: "Oups, une erreur est survenue...",
+            });
+            setIsLoading(false);
+         });
    }
 
    return (
@@ -133,10 +149,10 @@ const SecondStep = ({
                      name="profilePicture"
                      render={({ field }) => (
                         <FormItem>
-                           <FormLabel>
-                              Photo de profil{" "}
-                              <span className="text-red-500">*</span>
-                           </FormLabel>
+                           <FormLabel>Photo de profil </FormLabel>
+                           <FormDescription>
+                              Formats acceptés: jpg, jpeg, gif, webp, png, svg
+                           </FormDescription>
                            <FormControl>
                               <ImageInput
                                  {...field}
@@ -165,7 +181,10 @@ const SecondStep = ({
                               Dîtes aux autres utilisateurs qui vous-êtes
                            </FormDescription>
                            <FormControl>
-                              <Textarea></Textarea>
+                              <Textarea
+                                 placeholder="Donnez envie aux membres d'entrer en contact avec vous"
+                                 {...field}
+                              />
                            </FormControl>
                            <FormMessage />
                         </FormItem>

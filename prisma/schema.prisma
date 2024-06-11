@@ -15,14 +15,15 @@ datasource db {
 
 model User {
   id               String   @id @default(uuid())
+  clerkId          String?  @unique
   role             Role     @default(USER)
   // Informations
   firstName        String?
   lastName         String?
   pseudo           String?  @unique
   phone            String?  @unique
-  profilePicture   String?
-  coverPicture     String?
+  profilePicture   String?  @db.LongText
+  coverPicture     String?  @db.LongText
   // Informations complémentaires
   biography        String?  @db.LongText
   interests        String? 

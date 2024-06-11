@@ -14,7 +14,7 @@ import OnboardingView from "./Onboarding.view";
 const OnboardingContainer = () => {
    /** --ETAPES DE L'ONBOARDING-- **/
 
-   const [currentStep, setCurrentStep] = useState<number>(3);
+   const [currentStep, setCurrentStep] = useState<number>(4);
 
    const stepsList: OnboardingStepsListInterface[] = [
       { id: 1, label: "Welcome", component: { step: WelcomeStep } },
