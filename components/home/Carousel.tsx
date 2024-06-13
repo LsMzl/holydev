@@ -19,26 +19,24 @@ interface CategoryFiltersProps {
 }
 
 const CategoriesCarousel = ({ category }: CategoryFiltersProps) => {
-   
    return (
-      <Container className="mt-3">
+      <div className="">
          <Carousel
             opts={{
                align: "start",
             }}
-            className="max-w-[310px] w-full md:max-w-[768px] lg:max-w-[1024px] 2xl:max-w-[1390px] mx-auto"
+            className="w-full relative pt-5"
          >
             <CarouselContent>
-               <CarouselItem>
-                  <Button size="sm" className="shadow hover:bg-secondary">
-                     Tout
-                  </Button>
-               </CarouselItem>
+               <Button size="sm" className="shadow hover:bg-secondary">
+                  Tout
+               </Button>
+
                {category.map((item) => (
-                  <CarouselItem key={uuidv4()}>
+                  <CarouselItem key={uuidv4()} className="basis-1/7">
                      <Button
                         size="sm"
-                        className="shadow hover:bg-primary basis-1/3"
+                        className="shadow hover:bg-primary"
                         key={uuidv4()}
                         variant="secondary"
                      >
@@ -47,10 +45,12 @@ const CategoriesCarousel = ({ category }: CategoryFiltersProps) => {
                   </CarouselItem>
                ))}
             </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
+            <div className="absolute -top-4 right-12">
+               <CarouselNext />
+               <CarouselPrevious />
+            </div>
          </Carousel>
-      </Container>
+      </div>
    );
 };
 

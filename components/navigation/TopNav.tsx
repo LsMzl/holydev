@@ -24,7 +24,7 @@ const TopNav = ({ userMail, userAvatar, userClerkId, firstname, lastname }: User
    const { userId } = useAuth();
    const router = useRouter();
    return (
-      <nav className="flex items-center justify-between py-2 px-2 lg:px-5 sticky top-0 left-0 z-50 bg-background/95 shadow">
+      <nav className="flex items-center justify-between py-1 px-2 lg:px-5 2xl:pr-7 sticky top-0 left-0 z-50 bg-background/95 shadow">
          <Link href="/" className="text-md" title="Retour à la page d'accueil">
             <div className="flex items-center gap-2 ">
                <Image

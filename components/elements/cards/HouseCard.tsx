@@ -18,7 +18,7 @@ const HouseCard = ({ house, user }: { house: House; user?: User | null }) => {
    const country = getCountryByCode(house.country);
 
    return (
-      <div className="flex flex-col bg-card rounded-lg max-w-[380px] overflow-hidden border">
+      <div className="flex flex-col bg-card rounded-lg max-w-[300px] overflow-hidden border">
          {/* Illustration */}
          <div className=" h-[150px] relative rounded-lg aspect-square w-full hover:scale-100">
             <Image

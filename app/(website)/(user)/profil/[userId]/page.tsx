@@ -23,50 +23,85 @@ interface ProfilPageProps {
 const page = async ({ params, userId }: ProfilPageProps) => {
    const user = await getUserByClerkId(params.userId);
 
-
    return (
-      <div className="flex justify-center">
-         <Container className="max-w-7xl">
-            {/* Cover picture & informations */}
-            <section>
-               {/* Cover picture */}
-               <div className="h-[200px] lg:h-[400px] relative group">
-                  <Image
-                     src={user?.coverPicture ? user?.coverPicture : Banner}
-                     fill
-                     className="object-cover rounded-b-md"
-                     alt=""
-                  />
-                  <Button className="absolute z-10 items-center gap-2 right-1 bottom-1 hidden group-hover:flex">
-                     <CameraIcon size={20} />
-                     Changer de photo
-                  </Button>
-               </div>
+      <div className="">
+         <div className="bg-gradient-to-b from-gray-500 to-background ">
+            {/* Haut */}
+            <div className="max-w-[1400px] m-auto">
+               {/* Cover picture & informations */}
+               <section>
+                  {/* Cover picture */}
+                  <div className="h-[200px] lg:h-[400px] relative group">
+                     <Image
+                        src={user?.coverPicture ? user?.coverPicture : Banner}
+                        fill
+                        className="object-cover rounded-b-md"
+                        alt=""
+                     />
+                     <Button className="absolute z-10 items-center gap-2 right-1 bottom-1 hidden group-hover:flex">
+                        <CameraIcon size={20} />
+                        Changer de photo
+                     </Button>
+                  </div>
 
-               <div className="flex justify-between items-start mx-10 h-28 border-b mb-2">
-                  <div className="flex items-end relative -top-10 gap-2">
-                     {/* Avatar */}
-                     <Avatar className="bg-gray-400 w-24 h-24 md:w-36 md:h-36 border-4 border-background">
-                        <AvatarImage
-                           className="object-cover"
-                           src={
-                              user?.profilePicture
-                                 ? user?.profilePicture
-                                 : `https://api.dicebear.com/6.x/fun-emoji/svg?seed=${user?.email}`
-                           }
+                  <div className="flex justify-between items-start mx-2 md:mx-10 h-16 md:h-20 2xl:h-28 md:border-b md:mb-2">
+                     <div className="flex items-end relative -top-10 gap-2 ">
+                        {/* Avatar */}
+                        <Avatar className="bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 w-24 h-24 2xl:w-[140px] 2xl:h-[140px] shadow">
+                           <AvatarImage
+                              className="object-cover rounded-full w-[88px] h-[88px]  2xl:w-[132px] 2xl:h-[132px] absolute bottom-1 right-1"
+                              src={
+                                 user?.profilePicture
+                                    ? user?.profilePicture
+                                    : `https://api.dicebear.com/6.x/fun-emoji/svg?seed=${user?.email}`
+                              }
+                           />
+                        </Avatar>
+                        {/* Name, Hashtag */}
+                        <div className="flex flex-col items-start pb-2 2xl:pb-6">
+                           <p className="font-semibold text-xl 2xl:text-3xl capitalize">
+                              {user?.firstName} {user?.lastName}
+                           </p>
+                           <p className="text-xs 2xl:text-md">
+                              @{user?.pseudo}
+                           </p>
+                        </div>
+                     </div>
+
+                     {/* Menu Buttons Screen */}
+                     <div className=" mt-2 items-center gap-2 hidden md:flex ">
+                        <Link
+                           href="/mes-annonces"
+                           className={cn(
+                              buttonVariants(),
+                              "flex gap-1 font-semibold"
+                           )}
+                           title="Annonces utilisateur"
+                        >
+                           <Eye size={15} /> Mes annonces
+                        </Link>
+                        <UpdateProfileForm
+                           biography={user?.biography ?? ""}
+                           avatar={user?.profilePicture ?? ""}
+                           email={user?.email ?? ""}
+                           coverPicture={user?.coverPicture ?? ""}
+                           inscriptionDate={user?.createdAt}
                         />
-                        ù
-                     </Avatar>
-                     {/* Name, Hashtag */}
-                     <div className="flex flex-col items-start pb-6">
-                        <p className="font-semibold text-3xl capitalize">
-                           {user?.firstName} {user?.lastName}
-                        </p>
-                        <p>@{user?.pseudo}</p>
+                        <SettingsMenu
+                           firstname={user?.firstName ?? ""}
+                           lastname={user?.lastName ?? ""}
+                           country={user?.country ?? ""}
+                           state={user?.state ?? ""}
+                           city={user?.city ?? ""}
+                           address={user?.address ?? ""}
+                           email={user?.email ?? ""}
+                           phone={user?.phone ?? ""}
+                           password={user?.password ?? ""}
+                        />
                      </div>
                   </div>
-                  {/* Menu 1 */}
-                  <div className="flex mt-2 items-center gap-2 ">
+                  {/* Menu Buttons Mobile */}
+                  <div className="items-center flex justify-between mx-2 md:hidden border-b pb-5">
                      <Link
                         href="/mes-annonces"
                         className={cn(
@@ -96,14 +131,15 @@ const page = async ({ params, userId }: ProfilPageProps) => {
                         password={user?.password ?? ""}
                      />
                   </div>
-               </div>
-               <div className="mb-10 text-sm mx-10">guofehgodisjg</div>
+                  <div className="mb-10 text-sm mx-2 md:mx-10">guofehgodisjg</div>
+               </section>
+            </div>
+         </div>
 
-               {/* Menu 2 */}
-            </section>
-
-            <section className="flex gap-5 mb-28 sticky top-0 self-start">
-               <aside className="w-[25%] flex flex-col gap-5 ">
+         {/* Bas */}
+         <Container className="max-w-[1400px]">
+            <section className="md:flex gap-5 mb-28 sticky top-0 self-start">
+               <aside className="hidden w-[25%] md:flex flex-col gap-5 ">
                   <div className="border flex items-center justify-center text-center rounded m-auto bg-card w-full">
                      <span className="w-28 hover:bg-border/70 py-2 border-r border-border">
                         <p className="font-semibold leading-5">50</p>
@@ -156,11 +192,11 @@ const page = async ({ params, userId }: ProfilPageProps) => {
                      <div className="bg-secondary h-96"></div>
                   </div>
                </aside>
-               <div className="w-[75%] flex flex-col gap-5">
+               <div className="w-[100%] md:w-[75%] flex flex-col gap-5">
                   <div className="bg-card rounded border h-24">ghdfh</div>
                   {/* Publications */}
                   <div>
-                     <p className="text-xl text-medium bg-card rounded border h-24">
+                     <p className="text-xl text-medium bg-gradient-to-b from-gray-200 to-background rounded border h-[500px]">
                         Publications
                      </p>
                   </div>

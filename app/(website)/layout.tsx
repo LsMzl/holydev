@@ -42,13 +42,13 @@ export default async function RootLayout({
                   enableSystem
                   disableTransitionOnChange
                >
-                  {/* <Responsive /> */}
+                  <Responsive />
                   <TopNav
                      userAvatar={user?.profilePicture ?? ""}
                      userClerkId={userId ?? ""}
                      userMail={user?.email ?? ""}
                      firstname={user?.firstName ?? ""}
-                     lastname={user?.lastName?? ""}
+                     lastname={user?.lastName ?? ""}
                   />
                   {children}
                   <Toaster />

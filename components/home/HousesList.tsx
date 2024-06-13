@@ -1,23 +1,23 @@
 "use client";
-import { House, User } from "@prisma/client";
+import { Category, House, User } from "@prisma/client";
 import { v4 as uuidv4 } from "uuid";
 import HouseCard from "../elements/cards/HouseCard";
 import Container from "../elements/Container";
 import PageTitle from "../admin/PageTitle";
 
 import CountryFilter from "./CountryFilter";
-import Image from "next/image";
-import { Button } from "../ui/button";
-import { Separator } from "../ui/separator";
-import { Banknote, Star, Tag, UserIcon } from "lucide-react";
+
 import { usePathname, useRouter } from "next/navigation";
+import CategoriesCarousel from "./Carousel";
 
 const HousesList = ({
    houses,
    user,
+   categories,
 }: {
    houses: House[];
    user?: User | null;
+   categories: Category[];
 }) => {
    const router = useRouter();
 
@@ -25,17 +25,19 @@ const HousesList = ({
    const isMyHouses = pathName.includes("mes-annonces");
 
    return (
-      <Container className="ml-0">
+      <Container className="">
          <div className="flex items-center gap-2 md:gap-5 mt-3 md:mt-4">
             <PageTitle
                title="Toutes les annonces"
-               className="text-2xl md:text-3xl font-semibold"
+               className="text-xl md:text-2xl font-semibold"
             />
-            <div className="flex items-center gap-2 mt-1.5">
+            <div className="flex items-center md:gap-2 md:mt-1.5">
                <p>en</p>
                <CountryFilter />
             </div>
          </div>
+         {/* Categories Filter */}
+         <CategoriesCarousel category={categories} />
          <div className="flex items-center justify-between mt-5">
             <div className="text-sm flex items-center gap-5 font-medium">
                <p>Autour de moi</p>

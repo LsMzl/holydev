@@ -69,7 +69,7 @@ export function UserMenu({
             </Button>
          </DropdownMenuTrigger>
          {/* Contenu du menu */}
-         <DropdownMenuContent className="w-56 px-3 py-4 rounded">
+         <DropdownMenuContent className="px-3 py-4 rounded mr-5">
             {/* // TODO Mettre nom de l'utilisateur */}
             <DropdownMenuLabel className="capitalize">
                {firstname} {lastname}

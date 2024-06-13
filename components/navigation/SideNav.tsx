@@ -13,7 +13,8 @@ import { usePathname } from "next/navigation";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { useUser } from "@clerk/nextjs";
 import LeafletMap from "../house/LeafletMap";
-import Map from '@/public/img/map.jpg'
+import Map from "@/public/img/map.jpg";
+import MiniMap from "../user/MiniMap";
 
 interface SideNavProps {
    className?: string;
@@ -75,7 +76,7 @@ const SideNav = ({
    return (
       <aside
          className={cn(
-            "hidden lg:block px-5 py-2 sticky top-[85px] self-start w-[400px]"
+            "hidden lg:block px-5 py-2 sticky top-[85px] self-start"
          )}
       >
          {/* User infos */}
@@ -99,9 +100,9 @@ const SideNav = ({
                <p className="text-sm">{username}</p>
             </div>
             {/* Followers */}
-            <div className="rounded flex py-2 px-2 xl:px-5 text-xs justify-between bg-card shadow">
+            <div className="shadow">
                {/* <LeafletMap/> */}
-               <Image src={Map} alt="Carte avec géolocalisation de l'utilisateur"/>
+               <MiniMap cityLatitude="48.400002" cityLongitude="-4.48333" />
             </div>
          </section>
 
