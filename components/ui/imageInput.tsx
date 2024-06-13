@@ -71,6 +71,6 @@ const ImageInput = React.forwardRef<HTMLInputElement, ImageInputProps>(
       );
    }
 );
-Input.displayName = "ImageInput";
+ImageInput.displayName = "ImageInput";
 
 export { ImageInput };

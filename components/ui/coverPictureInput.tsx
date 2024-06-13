@@ -8,7 +8,7 @@ import Image from "next/image";
 import { buttonVariants } from "./button";
 import Banner from "@/public/img/banniere.jpg";
 
-export interface ImageInputProps
+export interface CoverPictureInputProps
    extends React.InputHTMLAttributes<HTMLInputElement> {
    handleCoverPictureSelect: (
       event: React.ChangeEvent<HTMLInputElement>
@@ -18,7 +18,7 @@ export interface ImageInputProps
    coverPicture: string;
 }
 
-const CoverPictureInput = React.forwardRef<HTMLInputElement, ImageInputProps>(
+const CoverPictureInput = React.forwardRef<HTMLInputElement, CoverPictureInputProps>(
    (
       {
          className,
@@ -81,6 +81,6 @@ const CoverPictureInput = React.forwardRef<HTMLInputElement, ImageInputProps>(
       );
    }
 );
-Input.displayName = "CoverPictureInput";
+CoverPictureInput.displayName = "CoverPictureInput";
 
 export { CoverPictureInput };

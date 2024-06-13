@@ -5,7 +5,7 @@ import { Input } from "./input";
 import { Camera, Eye, EyeOff } from "lucide-react";
 import { Avatar, AvatarImage } from "./avatar";
 
-export interface ImageInputProps
+export interface AvatarInputProps
    extends React.InputHTMLAttributes<HTMLInputElement> {
    handleAvatarSelect: (event: React.ChangeEvent<HTMLInputElement>) => void;
    imagePreview: string | ArrayBuffer | null;
@@ -14,7 +14,7 @@ export interface ImageInputProps
    avatar: string;
 }
 
-const AvatarInput = React.forwardRef<HTMLInputElement, ImageInputProps>(
+const AvatarInput = React.forwardRef<HTMLInputElement, AvatarInputProps>(
    (
       {
          className,
@@ -72,6 +72,6 @@ const AvatarInput = React.forwardRef<HTMLInputElement, ImageInputProps>(
       );
    }
 );
-Input.displayName = "AvatarInput";
+AvatarInput.displayName = "AvatarInput";
 
 export { AvatarInput };
