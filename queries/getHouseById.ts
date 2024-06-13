@@ -5,20 +5,23 @@ import { db } from "../lib/db";
  * @returns Maison trouvée.
  */
 export const getHouseById = async (annonceId: string) => {
-  try {
-    const house = await db.house.findUnique({
-      where: {
-        id: annonceId,
-      },
-    });
+   try {
+      const house = await db.house.findUnique({
+         where: {
+            id: annonceId,
+         },
+         include: {
+            user: true,
+         },
+      });
 
-    //! No house found
-    if (!house) {
-      return null;
-    }
+      //! No house found
+      if (!house) {
+         return null;
+      }
 
-    return house;
-  } catch (error: any) {
-    throw new Error(error);
-  }
+      return house;
+   } catch (error: any) {
+      throw new Error(error);
+   }
 };

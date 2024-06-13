@@ -6,6 +6,7 @@ import {
    DropdownMenuGroup,
    DropdownMenuItem,
    DropdownMenuSeparator,
+   DropdownMenuLabel,
 } from "../ui/dropdown-menu";
 import {
    Calendar,
@@ -27,9 +28,22 @@ import { ThemeToggle } from "../provider/theme/ThemeToggle";
 import { useUser } from "@clerk/clerk-react";
 import { Avatar, AvatarImage } from "../ui/avatar";
 
-export function UserMenu() {
+interface UserMenuProps {
+   userMail: string;
+   userAvatar: string;
+   userClerkId: string;
+   firstname: string;
+   lastname: string;
+}
+
+export function UserMenu({
+   userMail,
+   userAvatar,
+   userClerkId,
+   firstname,
+   lastname,
+}: UserMenuProps) {
    const { user } = useUser();
-   const userEmail = user?.emailAddresses[0].emailAddress;
 
    return (
       <DropdownMenu>
@@ -44,7 +58,12 @@ export function UserMenu() {
                {/* Avatar */}
                <Avatar className="hidden sm:block ml-1 bg-gray-200">
                   <AvatarImage
-                     src={`https://api.dicebear.com/8.x/fun-emoji/svg?seed=${userEmail}`}
+                     className="object-cover"
+                     src={
+                        userAvatar
+                           ? userAvatar
+                           : `https://api.dicebear.com/8.x/fun-emoji/svg?seed=${userMail}`
+                     }
                   />
                </Avatar>
             </Button>
@@ -52,7 +71,9 @@ export function UserMenu() {
          {/* Contenu du menu */}
          <DropdownMenuContent className="w-56 px-3 py-4 rounded">
             {/* // TODO Mettre nom de l'utilisateur */}
-            {/* <DropdownMenuLabel>{session?.user.email}</DropdownMenuLabel> */}
+            <DropdownMenuLabel className="capitalize">
+               {firstname} {lastname}
+            </DropdownMenuLabel>
             <DropdownMenuGroup>
                <DropdownMenuItem className="flex items-center gap-1 hover:text-gray-500 cursor-pointer">
                   <UserRound size={15} />

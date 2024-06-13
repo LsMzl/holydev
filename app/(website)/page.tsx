@@ -6,6 +6,7 @@ import CategoriesCarousel from "@/components/home/Carousel";
 import SideNav from "@/components/navigation/SideNav";
 import { auth } from "@clerk/nextjs/server";
 import { getUserByClerkId } from "@/queries/getUserByClerkId";
+import { House, User } from "@prisma/client";
 
 interface HousesProps {
    searchParams: {
@@ -14,34 +15,32 @@ interface HousesProps {
       state: string;
       city: string;
    };
+
 }
 
-export default async function Home({ searchParams }: HousesProps) {
+export default async function Home({ searchParams }: HousesProps ) {
    const houses = await getAllHouses(searchParams);
    const categories = await getAllCategories();
+   
 
    // Informations utilisateur
    const { userId } = auth();
-   const user = await getUserByClerkId(userId ?? "");
- 
-   
-
+   const connectedUser = await getUserByClerkId(userId ?? "");
 
    if (!houses) return <div>Aucune annonce trouvée</div>;
    return (
       <div className="flex">
          <SideNav
-            userMail={user?.email}
-            userAvatar={user?.profilePicture}
-            userFirstName={user?.firstName}
-            userLastName={user?.lastName}
-            username={user?.pseudo}
+            userMail={connectedUser?.email}
+            userAvatar={connectedUser?.profilePicture}
+            userFirstName={connectedUser?.firstName}
+            userLastName={connectedUser?.lastName}
+            username={connectedUser?.pseudo}
+            userId={connectedUser?.clerkId}
          />
-         <div className="w-full md:mx-5 pt-2">
-            
+         <div className="w-full  pt-2">
             <CategoriesCarousel category={categories} />
             <HousesList houses={houses} />
-            
          </div>
       </div>
    );

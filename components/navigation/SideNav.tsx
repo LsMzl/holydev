@@ -12,6 +12,8 @@ import { Calendar, LucideIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { useUser } from "@clerk/nextjs";
+import LeafletMap from "../house/LeafletMap";
+import Map from '@/public/img/map.jpg'
 
 interface SideNavProps {
    className?: string;
@@ -28,6 +30,7 @@ type sideNavUserInfosProps = {
    userFirstName: string | undefined | null;
    userLastName: string | undefined | null;
    username: string | undefined | null;
+   userId: string | undefined | null;
 };
 
 const sideNavLinks: SideNavProps[] = [
@@ -63,6 +66,7 @@ const SideNav = ({
    userFirstName,
    userLastName,
    username,
+   userId,
 }: sideNavUserInfosProps) => {
    const pathname = usePathname();
 
@@ -71,43 +75,37 @@ const SideNav = ({
    return (
       <aside
          className={cn(
-            "hidden lg:block px-5 py-2 sticky top-[72px] self-start w-[350px] ml-3 bg-slate-500"
+            "hidden lg:block px-5 py-2 sticky top-[85px] self-start w-[400px]"
          )}
       >
          {/* User infos */}
          <section className="mb-5">
             <div className="text-center mb-5">
-               <Avatar className="hidden sm:block ml-1 bg-gray-200 h-20 w-20 relative left-[50%] -translate-x-[50%] border-2 border-red-600">
-                  <AvatarImage
-                     className="object-cover"
-                     src={
-                        userAvatar
-                           ? userAvatar
-                           : `https://api.dicebear.com/6.x/fun-emoji/svg?seed=${userMail}`
-                     }
-                  />
+               <Avatar className="hidden sm:block ml-1 bg-gray-200 h-28 w-28 relative left-[50%] -translate-x-[50%] drop-shadow-lg mb-2">
+                  <Link href={`/profil/${userId}`} title="Profil utilisateur">
+                     <AvatarImage
+                        className="object-cover"
+                        src={
+                           userAvatar
+                              ? userAvatar
+                              : `https://api.dicebear.com/6.x/fun-emoji/svg?seed=${userMail}`
+                        }
+                     />
+                  </Link>
                </Avatar>
-               <p className="font-semibold capitalize">{userFirstName} {userLastName}</p>
+               <p className="font-semibold capitalize">
+                  {userFirstName} {userLastName}
+               </p>
                <p className="text-sm">{username}</p>
             </div>
             {/* Followers */}
-            <div className="rounded flex py-2 px-2 xl:px-5 text-xs justify-between bg-card">
-               <span className="flex flex-col items-center justify-center">
-                  <p className="text-sm font-bold">127</p>
-                  <p className="font-medium">Abonnés</p>
-               </span>
-               <span className="flex flex-col items-center justify-center">
-                  <p className="text-sm font-bold">54</p>
-                  <p className="font-medium">Likes</p>
-               </span>
-               <span className="flex flex-col items-center justify-center">
-                  <p className="text-sm font-bold">547</p>
-                  <p className="font-medium">Vues</p>
-               </span>
+            <div className="rounded flex py-2 px-2 xl:px-5 text-xs justify-between bg-card shadow">
+               {/* <LeafletMap/> */}
+               <Image src={Map} alt="Carte avec géolocalisation de l'utilisateur"/>
             </div>
          </section>
 
-         <section className="rounded p-3 bg-card">
+         <section className="rounded p-3 bg-card shadow">
             {/* Links */}
             <div className="flex flex-col gap-1">
                {sideNavLinks.map((link, index) => (

@@ -13,7 +13,6 @@ import { v4 as uuidv4 } from "uuid";
 import { ICity, IState } from "country-state-city";
 import { useRouter, useSearchParams } from "next/navigation";
 import qs from "query-string";
-import { Button } from "../ui/button";
 
 const LocationFilter = () => {
    const router = useRouter();
@@ -104,77 +103,69 @@ const LocationFilter = () => {
    };
 
    return (
-      <Container>
-         <div className="flex flex-col items-center text-sm w-full">
-            <div className="flex justify-between text-xs font-medium w-full mb-3">
-               <p>Filtres</p>
-               <p
-                  className="text-red-500 cursor-pointer"
-                  onClick={() => handleClear()}
+      <div className="flex flex-col items-center text-sm w-full">
+         <div className="flex justify-between text-xs font-medium w-full mb-3">
+            <p>Filtres</p>
+            <p
+               className="text-red-500 cursor-pointer"
+               onClick={() => handleClear()}
+            >
+               Annuler
+            </p>
+         </div>
+         <div className="w-full flex flex-col gap-1">
+            {/* Pays */}
+            <div>
+               <Select
+                  value={country}
+                  onValueChange={(value) => setCountry(value)}
                >
-                  Annuler
-               </p>
+                  <SelectTrigger className="bg-background">
+                     <SelectValue placeholder="Pays" />
+                  </SelectTrigger>
+                  <SelectContent>
+                     {countries.map((country) => (
+                        <SelectItem value={country.isoCode} key={uuidv4()}>
+                           {country.name}
+                        </SelectItem>
+                     ))}
+                  </SelectContent>
+               </Select>
             </div>
-            <div className="w-full flex flex-col gap-1">
-               {/* Pays */}
-               <div>
-                  <Select
-                     value={country}
-                     onValueChange={(value) => setCountry(value)}
-                  >
-                     <SelectTrigger className="bg-background">
-                        <SelectValue placeholder="Pays" />
-                     </SelectTrigger>
-                     <SelectContent>
-                        {countries.map((country) => (
-                           <SelectItem value={country.isoCode} key={uuidv4()}>
-                              {country.name}
+            {/* Régions */}
+            <div className="w-full">
+               <Select value={state} onValueChange={(value) => setState(value)}>
+                  <SelectTrigger className="bg-background">
+                     <SelectValue placeholder="Région" />
+                  </SelectTrigger>
+                  <SelectContent>
+                     {!!states.length &&
+                        states.map((state) => (
+                           <SelectItem value={state.isoCode} key={uuidv4()}>
+                              {state.name}
                            </SelectItem>
                         ))}
-                     </SelectContent>
-                  </Select>
-               </div>
-               {/* Régions */}
-               <div>
-                  <Select
-                     value={state}
-                     onValueChange={(value) => setState(value)}
-                  >
-                     <SelectTrigger className="bg-background">
-                        <SelectValue placeholder="Région" />
-                     </SelectTrigger>
-                     <SelectContent>
-                        {!!states.length &&
-                           states.map((state) => (
-                              <SelectItem value={state.isoCode} key={uuidv4()}>
-                                 {state.name}
-                              </SelectItem>
-                           ))}
-                     </SelectContent>
-                  </Select>
-               </div>
-               {/* Villes */}
-               <div>
-                  <Select
-                     value={city}
-                     onValueChange={(value) => setCity(value)}
-                  >
-                     <SelectTrigger className="bg-background">
-                        <SelectValue placeholder="Ville" />
-                     </SelectTrigger>
-                     <SelectContent>
-                        {!!cities.length &&
-                           cities.map((city) => (
-                              <SelectItem value={city.name} key={uuidv4()}>
-                                 {city.name}
-                              </SelectItem>
-                           ))}
-                     </SelectContent>
-                  </Select>
-               </div>
+                  </SelectContent>
+               </Select>
+            </div>
+            {/* Villes */}
+            <div>
+               <Select value={city} onValueChange={(value) => setCity(value)}>
+                  <SelectTrigger className="bg-background">
+                     <SelectValue placeholder="Ville" />
+                  </SelectTrigger>
+                  <SelectContent>
+                     {!!cities.length &&
+                        cities.map((city) => (
+                           <SelectItem value={city.name} key={uuidv4()}>
+                              {city.name}
+                           </SelectItem>
+                        ))}
+                  </SelectContent>
+               </Select>
             </div>
          </div>
-      </Container>
+      </div>
    );
 };
 

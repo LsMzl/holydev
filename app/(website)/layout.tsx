@@ -21,9 +21,7 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
    children,
-}: Readonly<{
-   children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
    // Informations utilisateur
    const { userId } = auth();
    const user = await getUserByClerkId(userId ?? "");
@@ -45,7 +43,13 @@ export default async function RootLayout({
                   disableTransitionOnChange
                >
                   {/* <Responsive /> */}
-                  <TopNav />
+                  <TopNav
+                     userAvatar={user?.profilePicture ?? ""}
+                     userClerkId={userId ?? ""}
+                     userMail={user?.email ?? ""}
+                     firstname={user?.firstName ?? ""}
+                     lastname={user?.lastName?? ""}
+                  />
                   {children}
                   <Toaster />
                </ThemeProvider>

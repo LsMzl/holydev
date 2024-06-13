@@ -1,6 +1,6 @@
 "use client";
 // Database
-import { Booking, House } from "@prisma/client";
+import { Booking, House, User } from "@prisma/client";
 
 // Hooks
 import useLocation from "@/hooks/useLocations";
@@ -38,17 +38,15 @@ import { useRouter } from "next/navigation";
 import { toast } from "../ui/use-toast";
 import { DateRangePicker } from "./DateRangePicker";
 
-interface HouseProps {
-   house: House;
-   bookings?: Booking[];
-}
 
 const HouseDetails = ({
    house,
    bookings,
+   user,
 }: {
    house: House;
    bookings?: Booking[];
+   user?: User | null;
 }) => {
    const { getCountryByCode, getStateByCode } = useLocation();
    const country = getCountryByCode(house.country);
@@ -281,19 +279,30 @@ const HouseDetails = ({
                {/* Owner Informations & Contact */}
                <div className="flex items-center justify-between gap-2 mt-3 border rounded-lg shadow px-2 py-2 md:p-3 hover:shadow-none hover:bg-background/80">
                   {/* Lien vers le profil de l'utilisateur */}
-                  <Link href="/" title="Profil de l'utilisateur">
-                     <div className="flex items-center gap-2">
+                  <Link
+                     href={`/profil/${user?.clerkId}`}
+                     title="Profil de l'utilisateur"
+                     className="flex items-center gap-3"
+                  >
+                     <Avatar>
+                        <AvatarImage
+                           src={
+                              user?.profilePicture
+                                 ? user.profilePicture
+                                 : `https://api.dicebear.com/6.x/fun-emoji/svg?seed=${user?.email}`
+                           }
+                           className="rounded-full h-14 w-14 object-cover"
+                        />
+                     </Avatar>
+
+                     <div className="flex gap-10">
                         {/* owner pic */}
-                        <Avatar className="">
-                           <AvatarImage
-                              src="https://github.com/shadcn.png"
-                              className="rounded-full h-10 w-10   md:h-14 md:w-14"
-                           />
-                        </Avatar>
                         {/* Owner details */}
-                        <div className="flex flex-col w-[220px] md:w-full text-ellipsis overflow-hidden">
-                           <p className="font-medium">{house.ownerId}</p>
-                           <p className="text-sm">{house.ownerId}</p>
+                        <div className="flex flex-col w-[220px] md:w-full ">
+                           <p className="font-medium capitalize">
+                              {user?.firstName} {user?.lastName}
+                           </p>
+                           <p className="text-sm">{user?.pseudo}</p>
                         </div>
                      </div>
                   </Link>

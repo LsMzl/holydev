@@ -12,11 +12,19 @@ import Image from "next/image";
 import Logo from "@/public/logo/logo.png";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
-const TopNav = () => {
+interface UserMenuProps {
+   userMail: string;
+   userAvatar: string;
+   userClerkId: string;
+   firstname: string;
+   lastname: string;
+}
+
+const TopNav = ({ userMail, userAvatar, userClerkId, firstname, lastname }: UserMenuProps) => {
    const { userId } = useAuth();
    const router = useRouter();
    return (
-      <nav className="flex items-center justify-between py-2 px-2 lg:px-5 mb-2 sticky top-0 left-0 z-50 bg-background">
+      <nav className="flex items-center justify-between py-2 px-2 lg:px-5 sticky top-0 left-0 z-50 bg-background/95 shadow">
          <Link href="/" className="text-md" title="Retour à la page d'accueil">
             <div className="flex items-center gap-2 ">
                <Image
@@ -34,13 +42,15 @@ const TopNav = () => {
 
          <div className="flex justify-between items-center w-[1515px] gap-5">
             <div className="flex items-center gap-2">
-               <Image
-                  src={Logo}
-                  width={40}
-                  height={50}
-                  alt="Logo de Holydevs représentant des maisons de vacances sous des palmiers."
-                  className="sm:hidden"
-               />
+               <Link href="/" title="Retour à la page d'accueil">
+                  <Image
+                     src={Logo}
+                     width={40}
+                     height={50}
+                     alt="Logo de Holydevs représentant des maisons de vacances sous des palmiers."
+                     className="sm:hidden"
+                  />
+               </Link>
                {/* Search Bar */}
                {/* Mobile */}
                <div className="sm:hidden">
@@ -84,7 +94,17 @@ const TopNav = () => {
                   <Bell />
                   <span className="absolute h-4 w-4 rounded-full bg-red-500 -top-1 -right-1"></span>
                </div>
-               {userId ? <UserMenu /> : <GuestMenu />}
+               {userId ? (
+                  <UserMenu
+                     userMail={userMail}
+                     userClerkId={userClerkId}
+                     userAvatar={userAvatar}
+                     firstname={firstname}
+                     lastname={lastname}
+                  />
+               ) : (
+                  <GuestMenu />
+               )}
             </div>
          </div>
       </nav>

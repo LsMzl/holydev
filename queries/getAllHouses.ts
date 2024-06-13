@@ -6,28 +6,31 @@ import { db } from "@/lib/db";
  * @returns Array - Tableau contenant toutes les annonces.
  */
 export const getAllHouses = async (searchParams: {
-    title: string,
-    country: string,
-    state: string,
-    city: string,
+   title: string;
+   country: string;
+   state: string;
+   city: string;
 }) => {
-    try {
-        const { title, country, state, city } = searchParams;
-        const houses = await db.house.findMany({
-            where :{
-                title: {
-                    contains: title
-                },
-                country,
-                state,
-                city,
-            }
-            //! Inclure prix par nuit, prochaine disponibilité
-        });
-        return houses;
-    } catch (error: any) {
-        console.log('error', error)
-        throw new Error(error);
-    }
-};
+   try {
+      const { title, country, state, city } = searchParams;
+      const houses = await db.house.findMany({
+         where: {
+            title: {
+               contains: title,
+            },
+            country,
+            state,
+            city,
+            },
+        //! Inclure infos du propriétaire, prochaine disponibilité
+         include: {
+            user: true,
+         },
+      });
 
+      return houses;
+   } catch (error: any) {
+      console.log("error", error);
+      throw new Error(error);
+   }
+};

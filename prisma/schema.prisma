@@ -24,6 +24,11 @@ model User {
   phone            String?  @unique
   profilePicture   String?  @db.LongText
   coverPicture     String?  @db.LongText
+  // Localisation
+  country          String?
+  state            String?
+  city             String?
+  address          String?
   // Informations complémentaires
   biography        String?  @db.LongText
   interests        String? 
@@ -35,9 +40,13 @@ model User {
   // Création, modification
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
-
+  // Onboarding
   isOnboardingCompleted Boolean @default(false)
+  // Maisons
+  //! Un utilisateur peut avoir plusieurs maisons
+  houses House[]
 
+  
   Sessions          Session[]
   VerificationToken VerificationToken[]
   // Avis client
@@ -94,6 +103,10 @@ model House {
   // Réservations
   //! Une maison peut avoir plusieurs réservations
   bookings Booking[]
+
+  //! Une maison n'a qu'un seul propriétaire
+  user           User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String?
 
   // @@index([ownerId])
 }

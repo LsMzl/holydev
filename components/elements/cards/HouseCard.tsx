@@ -3,12 +3,12 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import useLocation from "@/hooks/useLocations";
-import { House } from "@prisma/client";
-import { Banknote, Star, Tag, User } from "lucide-react";
+import { House, User } from "@prisma/client";
+import { Banknote, Star, Tag, UserIcon } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 
-const HouseCard = ({ house }: { house: House }) => {
+const HouseCard = ({ house, user }: { house: House; user?: User | null }) => {
    const router = useRouter();
 
    const pathName = usePathname();
@@ -50,14 +50,19 @@ const HouseCard = ({ house }: { house: House }) => {
             </div>
             <Separator className="my-3" />
             <div className="flex flex-col gap-2 font-medium">
+               {/* Nom du propriétaire */}
                <span className="flex items-center gap-1">
-                  <User size={15} />
-                  <p className="text-xs">Nom du propriétaire</p>
+                  <UserIcon size={15} />
+                  <p className="text-xs capitalize">
+                     {user?.firstName} {user?.lastName}
+                  </p>
                </span>
+               {/* Liste des catégories */}
                <span className="flex items-center gap-1">
                   <Tag size={15} />
                   <p className="text-xs">Catégorie</p>
                </span>
+               {/* Tarif par nuit */}
                <span className="flex items-center gap-1">
                   <Banknote size={15} />
                   <p className="text-xs">{house.price}€ /nuit</p>

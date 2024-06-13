@@ -21,7 +21,7 @@ interface CategoryFiltersProps {
 const CategoriesCarousel = ({ category }: CategoryFiltersProps) => {
    
    return (
-      <Container>
+      <Container className="mt-3">
          <Carousel
             opts={{
                align: "start",
