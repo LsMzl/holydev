@@ -28,7 +28,29 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import UpdateInfosForm from "./UpdateInfosForm";
 
-const SettingsMenu = () => {
+interface SettingsMenuProps {
+   lastname: string;
+   firstname: string;
+   country: string;
+   state: string;
+   city: string;
+   address: string;
+   email: string;
+   phone: string;
+   password: string;
+}
+
+const SettingsMenu = ({
+   firstname,
+   lastname,
+   country,
+   state,
+   city,
+   address,
+   email,
+   phone,
+   password,
+}: SettingsMenuProps) => {
    return (
       <Sheet>
          <SheetTrigger asChild>
@@ -70,7 +92,17 @@ const SettingsMenu = () => {
                {/* Modification infos utilisateur */}
                <div>
                   <p className="font-medium mb-2">Informations du copmpte</p>
-                  <UpdateInfosForm />
+                  <UpdateInfosForm
+                     firstname={firstname}
+                     lastname={lastname}
+                     country={country}
+                     state={state}
+                     city={city}
+                     address={address}
+                     email={email}
+                     phone={phone}
+                     password={password}
+                  />
                </div>
                {/* Suppression du compte */}
                <AlertDialog>

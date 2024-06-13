@@ -15,6 +15,8 @@ import Image from "next/image";
 import Banner from "@/public/img/banniere.jpg";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import UpdateAvatar from "./UpdateAvatar";
+import UpdateCoverPicture from "./UpdateCoverPicture";
+import UpdateBiography from "./UpdateBiography";
 
 interface UpdateProfileProps {
    biography: string;
@@ -53,6 +55,7 @@ const UpdateProfileForm = ({
                <div>
                   <div className="flex justify-between items-center mb-2">
                      <p className="font-semibold text-md">Photo de profil</p>
+                     {/* Form */}
                      <UpdateAvatar avatar={avatar} />
                   </div>
                   <Avatar className="bg-gray-400 w-24 h-24 md:w-32 md:h-32 drop-shadow-lg m-auto">
@@ -72,7 +75,7 @@ const UpdateProfileForm = ({
                      <p className="font-semibold text-md">
                         Photo de couverture
                      </p>
-                     <p className="text-sm">Modifier</p>
+                     <UpdateCoverPicture coverPicture={coverPicture} />
                   </div>
                   <div className="h-[150px] relative">
                      {/* //TODO Image par défaut si non renseignée */}
@@ -89,7 +92,7 @@ const UpdateProfileForm = ({
                   <div className="flex justify-between items-center mb-2">
                      <p className="font-semibold text-md">Biographie</p>
                      {/* Condition Editer si existante, Ajouter si non existante */}
-                     <p className="text-sm">Modifier</p>
+                     <UpdateBiography biography={biography}/>
                   </div>
                   <p className="text-sm">
                      {biography

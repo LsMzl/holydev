@@ -22,7 +22,7 @@ interface ProfilPageProps {
 }
 const page = async ({ params, userId }: ProfilPageProps) => {
    const user = await getUserByClerkId(params.userId);
-   
+
 
    return (
       <div className="flex justify-center">
@@ -54,7 +54,8 @@ const page = async ({ params, userId }: ProfilPageProps) => {
                                  ? user?.profilePicture
                                  : `https://api.dicebear.com/6.x/fun-emoji/svg?seed=${user?.email}`
                            }
-                        />ù
+                        />
+                        ù
                      </Avatar>
                      {/* Name, Hashtag */}
                      <div className="flex flex-col items-start pb-6">
@@ -83,7 +84,17 @@ const page = async ({ params, userId }: ProfilPageProps) => {
                         coverPicture={user?.coverPicture ?? ""}
                         inscriptionDate={user?.createdAt}
                      />
-                     <SettingsMenu />
+                     <SettingsMenu
+                        firstname={user?.firstName ?? ""}
+                        lastname={user?.lastName ?? ""}
+                        country={user?.country ?? ""}
+                        state={user?.state ?? ""}
+                        city={user?.city ?? ""}
+                        address={user?.address ?? ""}
+                        email={user?.email ?? ""}
+                        phone={user?.phone ?? ""}
+                        password={user?.password ?? ""}
+                     />
                   </div>
                </div>
                <div className="mb-10 text-sm mx-10">guofehgodisjg</div>

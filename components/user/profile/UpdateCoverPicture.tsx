@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 
+// Components
 import {
    Dialog,
    DialogClose,
@@ -10,9 +11,6 @@ import {
    DialogTitle,
    DialogTrigger,
 } from "@/components/ui/dialog";
-import * as z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import {
    Form,
    FormControl,
@@ -22,25 +20,28 @@ import {
    FormMessage,
 } from "@/components/ui/form";
 import { toast } from "@/components/ui/use-toast";
-import { AvatarInput } from "@/components/ui/avatarInput";
-import { useUser } from "@clerk/nextjs";
+
+// Libraries
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Check, Loader2, X } from "lucide-react";
-import axios from "axios";
-import { useRouter } from "next/navigation";
+import { CoverPictureInput } from "@/components/ui/coverPictureInput";
 
-interface UpdateAvatarProps {
-   avatar: string;
+interface UpdateCoverPictureProps {
+   coverPicture: string;
 }
 
 const formSchema = z.object({
-   profilePicture: z.string().optional(),
+   coverPicture: z.string().optional(),
 });
 
-const UpdateAvatar = ({ avatar }: UpdateAvatarProps) => {
+const UpdateCoverPicture = ({ coverPicture }: UpdateCoverPictureProps) => {
    const router = useRouter();
-   const { user } = useUser();
-   const userEmail = user?.emailAddresses[0].emailAddress;
+
    // States
    const [isLoading, setIsLoading] = useState<boolean>(false);
    /**- Etat de sélection de l'image, null par défaut */
@@ -55,12 +56,14 @@ const UpdateAvatar = ({ avatar }: UpdateAvatarProps) => {
    const form = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
       defaultValues: {
-         profilePicture: "",
+         coverPicture: "",
       },
    });
 
    /** Affichage de l'image selectionnée par l'utilisateur.*/
-   const handleAvatarSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+   const handleCoverPictureSelect = (
+      event: React.ChangeEvent<HTMLInputElement>
+   ) => {
       const file = event.target.files?.[0];
       const fileTypes = ["jpg", "jpeg", "gif", "webp", "png", "svg"];
 
@@ -98,7 +101,7 @@ const UpdateAvatar = ({ avatar }: UpdateAvatarProps) => {
 
    function onSubmit(values: z.infer<typeof formSchema>) {
       // Récupération de l'image uploadée
-      values.profilePicture = imagePreview?.toString();
+      values.coverPicture = imagePreview?.toString();
       setIsLoading(true);
 
       axios
@@ -106,7 +109,7 @@ const UpdateAvatar = ({ avatar }: UpdateAvatarProps) => {
          .then((res) => {
             toast({
                variant: "success",
-               description: "Photo de profil mise à jour avec succès",
+               description: "Image de couverture mise à jour avec succès",
             });
             router.refresh();
             setIsLoading(false);
@@ -128,31 +131,32 @@ const UpdateAvatar = ({ avatar }: UpdateAvatarProps) => {
          </DialogTrigger>
          <DialogContent>
             <DialogHeader>
-               <DialogTitle>Sélectionnez une photo de profil</DialogTitle>
+               <DialogTitle>Sélectionnez une image de couverture</DialogTitle>
             </DialogHeader>
             <Form {...form}>
                <form
-                  className="flex flex-col items-center gap-5 px-20"
+                  className="flex flex-col items-center gap-5 w-full"
                   onSubmit={form.handleSubmit(onSubmit)}
                >
                   <div className="">
                      <FormField
                         control={form.control}
-                        name="profilePicture"
+                        name="coverPicture"
                         render={({ field }) => (
                            <FormItem>
                               <FormLabel className="hidden">
                                  Photo de profil{" "}
                               </FormLabel>
                               <FormControl>
-                                 <AvatarInput
+                                 <CoverPictureInput
                                     {...field}
-                                    handleAvatarSelect={handleAvatarSelect}
+                                    handleCoverPictureSelect={
+                                       handleCoverPictureSelect
+                                    }
                                     imagePreview={imagePreview}
                                     uploadProgress={uploadProgress}
                                     disabled={isLoading}
-                                    userMail={userEmail}
-                                    avatar={avatar}
+                                    coverPicture={coverPicture}
                                  />
                               </FormControl>
                               <FormMessage />
@@ -193,4 +197,4 @@ const UpdateAvatar = ({ avatar }: UpdateAvatarProps) => {
    );
 };
 
-export default UpdateAvatar;
+export default UpdateCoverPicture;

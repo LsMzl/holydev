@@ -2,35 +2,38 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 import { Input } from "./input";
-import { Camera, Eye, EyeOff } from "lucide-react";
-import { Avatar, AvatarImage } from "./avatar";
+import { ImageUp } from "lucide-react";
+
+import Image from "next/image";
+import { buttonVariants } from "./button";
+import Banner from "@/public/img/banniere.jpg";
 
 export interface ImageInputProps
    extends React.InputHTMLAttributes<HTMLInputElement> {
-   handleAvatarSelect: (event: React.ChangeEvent<HTMLInputElement>) => void;
+   handleCoverPictureSelect: (
+      event: React.ChangeEvent<HTMLInputElement>
+   ) => void;
    imagePreview: string | ArrayBuffer | null;
    uploadProgress: number;
-   userMail?: string;
-   avatar: string;
+   coverPicture: string;
 }
 
-const AvatarInput = React.forwardRef<HTMLInputElement, ImageInputProps>(
+const CoverPictureInput = React.forwardRef<HTMLInputElement, ImageInputProps>(
    (
       {
          className,
          type,
          imagePreview,
-         handleAvatarSelect,
+         handleCoverPictureSelect,
          uploadProgress,
-         avatar,
-         userMail,
+         coverPicture,
          ...props
       },
       ref
    ) => {
       const [isLoading, setIsLoading] = React.useState(false);
       return (
-         <div className="flex items-center gap-3 relative">
+         <div className="relative">
             {/* Barre de progression */}
             {/* <div
                className={uploadProgressBarStyle}
@@ -38,40 +41,46 @@ const AvatarInput = React.forwardRef<HTMLInputElement, ImageInputProps>(
             /> */}
 
             {/* Remplacement de l'input file par un bouton personnalisé */}
-            <Avatar className="bg-background h-32 w-32 drop-shadow">
-               <AvatarImage
-                  className="object-cover"
+
+            <div className="h-[200px] relative bg-background w-[460px] rounded">
+               <Image
                   src={
                      imagePreview
                         ? typeof imagePreview === "string"
                            ? imagePreview
                            : String(imagePreview)
-                        : avatar ||
-                          `https://api.dicebear.com/6.x/fun-emoji/svg?seed=${userMail}`
+                        : coverPicture || Banner
+
                   }
+                  fill
+                  className="object-cover rounded"
+                  alt=""
                />
-            </Avatar>
+            </div>
             <label
                className={cn(
                   isLoading ? "cursor-not-allowed" : "cursor-pointer",
-                  "inline-block bg-secondary/80 hover:animate-ping px-2 py-2 font-medium animate shadow-lg rounded-full absolute bottom-1 -right-2"
+                  "absolute bottom-1 right-1"
                )}
-               title="Changer de photo de profil"
+               title="Changer de photo de couverture"
             >
-               <Camera />
+               <div className={cn(buttonVariants())}>
+                  <ImageUp className="mr-2 h-4 w-4" />
+                  Choisir
+               </div>
                <Input
                   className={cn(className, "hidden")}
                   {...props}
                   ref={ref}
                   type="file"
                   disabled={isLoading}
-                  onChange={handleAvatarSelect}
+                  onChange={handleCoverPictureSelect}
                />
             </label>
          </div>
       );
    }
 );
-Input.displayName = "AvatarInput";
+Input.displayName = "CoverPictureInput";
 
-export { AvatarInput };
+export { CoverPictureInput };
