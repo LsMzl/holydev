@@ -27,7 +27,7 @@ const CategoriesCarousel = ({ category }: CategoryFiltersProps) => {
             }}
             className="w-full relative pt-5"
          >
-            <CarouselContent>
+            <CarouselContent className="-ml-0">
                <Button size="sm" className="shadow hover:bg-secondary">
                   Tout
                </Button>
