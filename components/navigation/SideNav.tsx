@@ -76,7 +76,7 @@ const SideNav = ({
    return (
       <aside
          className={cn(
-            "hidden lg:block px-5 py-2 sticky top-[85px] self-start"
+            "hidden lg:block py-2 sticky top-0 left-0 h-screen pt-24 ml-2"
          )}
       >
          {/* User infos */}
@@ -89,15 +89,29 @@ const SideNav = ({
                         src={
                            userAvatar
                               ? userAvatar
-                              : `https://api.dicebear.com/6.x/fun-emoji/svg?seed=${userMail}`
+                              : `https://api.dicebear.com/8.x/thumbs/svg?seed=${
+                                   Math.floor(Math.random() * 100) + 1
+                                }`
                         }
                      />
                   </Link>
                </Avatar>
-               <p className="font-semibold capitalize">
-                  {userFirstName} {userLastName}
-               </p>
-               <p className="text-sm">{username}</p>
+               {userFirstName || userLastName ? (
+                  <>
+                     <p className="font-semibold capitalize">
+                        {userFirstName} {userLastName}
+                     </p>
+                     <p className="text-sm">{username}</p>
+                  </>
+               ) : (
+                  <>
+                     <p className="font-semibold capitalize">Visiteur</p>
+                     <p className="text-xs">
+                        Connectez-vous pour profiter de toutes les
+                        fonctionnalités
+                     </p>
+                  </>
+               )}
             </div>
             {/* Followers */}
             <div className="shadow">
@@ -106,7 +120,7 @@ const SideNav = ({
             </div>
          </section>
 
-         <section className="rounded p-3 bg-card shadow">
+         <section className="rounded p-3 bg-card shadow  overflow-scroll">
             {/* Links */}
             <div className="flex flex-col gap-1">
                {sideNavLinks.map((link, index) => (

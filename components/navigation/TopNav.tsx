@@ -11,6 +11,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Logo from "@/public/logo/logo.png";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import Spacing from "../elements/Spacing";
 
 interface UserMenuProps {
    userMail: string;
@@ -20,11 +21,17 @@ interface UserMenuProps {
    lastname: string;
 }
 
-const TopNav = ({ userMail, userAvatar, userClerkId, firstname, lastname }: UserMenuProps) => {
+const TopNav = ({
+   userMail,
+   userAvatar,
+   userClerkId,
+   firstname,
+   lastname,
+}: UserMenuProps) => {
    const { userId } = useAuth();
    const router = useRouter();
    return (
-      <nav className="flex items-center justify-between py-1 px-2 lg:px-5 2xl:pr-7 sticky top-0 left-0 z-50 bg-background/95 shadow">
+      <nav className="flex items-center justify-between py-1 px-2 lg:px-5 2xl:pr-7 fixed w-full top-0 left-0 z-50 bg-background/95 shadow">
          <Link href="/" className="text-md" title="Retour à la page d'accueil">
             <div className="flex items-center gap-2 ">
                <Image
@@ -74,22 +81,26 @@ const TopNav = ({ userMail, userAvatar, userClerkId, firstname, lastname }: User
 
             <div className="flex items-center justify-between gap-3 md:gap-5">
                {/* Mobile */}
-               <Button className="md:hidden" size="sm">
-                  <Pen size={15} />
-               </Button>
+               {userId && (
+                  <Button className="md:hidden" size="sm">
+                     <Pen size={15} />
+                  </Button>
+               )}
 
                <div className="relative">
                   <Bell size={20} />
                   <span className="absolute h-4 w-4 rounded-full bg-red-500 -top-1 -right-1"></span>
                </div>
 
-               <Button
-                  className="hidden md:flex items-center gap-1 shadow "
-                  onClick={() => router.push("/annonce/ajouter")}
-               >
-                  <Plus size={15} />
-                  Créer une annonce
-               </Button>
+               {userId && (
+                  <Button
+                     className="hidden md:flex items-center gap-1 shadow "
+                     onClick={() => router.push("/ajouter")}
+                  >
+                     <Plus size={15} />
+                     Créer une annonce
+                  </Button>
+               )}
                <div className="relative hidden">
                   <Bell />
                   <span className="absolute h-4 w-4 rounded-full bg-red-500 -top-1 -right-1"></span>

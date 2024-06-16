@@ -39,15 +39,12 @@ import { toast } from "../ui/use-toast";
 import { DateRangePicker } from "./DateRangePicker";
 
 
-const HouseDetails = ({
-   house,
-   bookings,
-   user,
-}: {
-   house: House;
-   bookings?: Booking[];
-   user?: User | null;
-}) => {
+
+const HouseDetails = (
+   { house, bookings, user }: { house: House; bookings?: Booking[]; user: User | null },
+
+) => {
+   console.log("houseUser", user);
    const { getCountryByCode, getStateByCode } = useLocation();
    const country = getCountryByCode(house.country);
    const state = getStateByCode(house.country, house.state);
@@ -191,7 +188,7 @@ const HouseDetails = ({
    };
 
    return (
-      <Container>
+      <Container className="pt-28">
          {/* //TODO: Mettre un carousel */}
          <div className="flex justify-between items-center mb-3">
             {/* Titre de l'annonce */}
@@ -239,15 +236,15 @@ const HouseDetails = ({
 
                {/* Nombre de chambre etc */}
                <ul className="flex items-center text-md font-light">
-                  <li>4 chambres</li>
+                  <li>{house.bedroom} chambres</li>
                   <span>
                      <Dot size={15} />
                   </span>
-                  <li>5 lits</li>
+                  <li>{house.kitchen} cuisines</li>
                   <span>
                      <Dot size={15} />
                   </span>
-                  <li>2 salles de bain</li>
+                  <li>{house.bathroom} salles de bain</li>
                </ul>
 
                {/* Pricing */}
@@ -280,17 +277,13 @@ const HouseDetails = ({
                <div className="flex items-center justify-between gap-2 mt-3 border rounded-lg shadow px-2 py-2 md:p-3 hover:shadow-none hover:bg-background/80">
                   {/* Lien vers le profil de l'utilisateur */}
                   <Link
-                     href={`/profil/${user?.clerkId}`}
+                     href={`/profil/${user?.id}`}
                      title="Profil de l'utilisateur"
                      className="flex items-center gap-3"
                   >
                      <Avatar>
                         <AvatarImage
-                           src={
-                              user?.profilePicture
-                                 ? user.profilePicture
-                                 : `https://api.dicebear.com/6.x/fun-emoji/svg?seed=${user?.email}`
-                           }
+                           src={user?.profilePicture ?? ""}
                            className="rounded-full h-14 w-14 object-cover"
                         />
                      </Avatar>

@@ -20,17 +20,21 @@ import { Textarea } from "@/components/ui/textarea";
 import { ImageInput } from "@/components/ui/imageInput";
 import { ComponentsProps } from "@/types/onboardingTypes";
 import { toast } from "@/components/ui/use-toast";
-import { useUser } from "@clerk/nextjs";
 import axios from "axios";
+import Image from "next/image";
+import { cn } from "@/lib/utils";
+import { Camera } from "lucide-react";
 
 const formSchema = z.object({
-   profilePicture: z.string().optional(),
+   profilePicture: z.string().url().nonempty(),
    biography: z.string().optional(),
    interests: z.string().optional(),
    languages: z.string().optional(),
 });
 
 const SecondStep = ({
+   user,
+   dbUser,
    next,
    previous,
    isFirstStep,
@@ -41,15 +45,14 @@ const SecondStep = ({
    const form = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
       defaultValues: {
-         profilePicture: "",
-         biography: "",
-         interests: "",
-         languages: "",
+         profilePicture: user?.image
+            ? user?.image
+            : dbUser?.profilePicture || "",
+         biography: dbUser?.biography || "",
+         interests: dbUser?.interests || "",
+         languages: dbUser?.languages || "",
       },
    });
-
-   const { user } = useUser();
-   const userEmail = user?.emailAddresses[0].emailAddress;
 
    // States
    const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -59,51 +62,41 @@ const SecondStep = ({
    /**- Etat de sélection de l'image, null par défaut */
    const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
+   const [files, setFiles] = useState<File[]>([]);
+
    /**- Stockage de l'image, null par défaut */
    const [imagePreview, setImagePreview] = useState<
       string | ArrayBuffer | null
    >(null);
 
    /** Affichage de l'image selectionnée par l'utilisateur.*/
-   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files?.[0];
-      const fileTypes = ["jpg", "jpeg", "gif", "webp", "png", "svg"];
+   const handleImageSelect = (
+      e: React.ChangeEvent<HTMLInputElement>,
+      fieldChange: (value: string) => void
+   ) => {
+      e.preventDefault();
+      // const file = e.target.files?.[0];
+      // const fileTypes = ["jpg", "jpeg", "gif", "webp", "png", "svg"];
 
-      //? Fichier existant
-      if (file) {
-         setSelectedImage(file);
-         // Vérification de l'extension du fichier
-         let fileExtension = file?.name.split(".").pop()?.toLocaleLowerCase();
-         const isSuccess = fileTypes.indexOf(fileExtension || "") > -1;
+      const fileReader = new FileReader();
 
-         //! Extension non valide
-         if (!isSuccess) {
-            toast({
-               variant: "destructive",
-               title: "Extension de fichier non valide",
-               description: "Veuillez sélectionner un fichier valide",
-            });
-            return null;
-         }
+      if (e.target.files && e.target.files.length > 0) {
+         const file = e.target.files?.[0];
+         setFiles(Array.from(e.target.files));
 
-         //* Extension valide
-         // Lecture du fichier
-         const reader = new FileReader();
-         reader.onload = (event) => {
-            let imageDataUrl: string | ArrayBuffer | null = null;
-            //? Fichier existant
-            if (event.target) {
-               imageDataUrl = event.target.result;
-            }
-            setImagePreview(imageDataUrl);
+         if (!file.type.includes("image")) return;
+
+         fileReader.onload = async (event) => {
+            const imageDataUrl = event.target?.result?.toString() || "";
+            fieldChange(imageDataUrl);
          };
-         reader.readAsDataURL(file);
+
+         fileReader.readAsDataURL(file);
       }
    };
 
    function onSubmit(values: z.infer<typeof formSchema>) {
       // Récupération de l'image uploadée
-      values.profilePicture = imagePreview?.toString();
       setIsLoading(true);
       axios
          .patch(`api/user/onboarding`, values)
@@ -144,24 +137,54 @@ const SecondStep = ({
             <Form {...form}>
                <form className="space-y-3 md:space-y-5 mb-5 md:mb-10">
                   {/* Avatar */}
+
                   <FormField
                      control={form.control}
                      name="profilePicture"
                      render={({ field }) => (
-                        <FormItem>
-                           <FormLabel>Photo de profil </FormLabel>
-                           <FormDescription>
-                              Formats acceptés: jpg, jpeg, gif, webp, png, svg
-                           </FormDescription>
+                        <FormItem className="flex items-center justify-center md:justify-start gap-5">
+                           <FormLabel>
+                              {field.value ? (
+                                 <Image
+                                    src={field.value}
+                                    alt="profile_icon"
+                                    width={96}
+                                    height={96}
+                                    priority
+                                    className="rounded-full object-cover h-32 w-32"
+                                 />
+                              ) : (
+                                 <Image
+                                    src={`https://api.dicebear.com/6.x/fun-emoji/svg?seed=${user.email}`}
+                                    alt="profile_icon"
+                                    width={24}
+                                    height={24}
+                                    className="rounded-full object-cover"
+                                 />
+                              )}
+                           </FormLabel>
                            <FormControl>
-                              <ImageInput
-                                 {...field}
-                                 handleImageSelect={handleImageSelect}
-                                 imagePreview={imagePreview}
-                                 uploadProgress={uploadProgress}
-                                 disabled={isLoading}
-                                 userMail={userEmail}
-                              />
+                              <label
+                                 className={cn(
+                                    isLoading
+                                       ? "cursor-not-allowed"
+                                       : "cursor-pointer",
+                                    "bg-secondary hover:bg-primary rounded px-2 py-2 font-medium animate shadow"
+                                 )}
+                              >
+                                 <div className="flex items-center gap-2 text-sm">
+                                    <Camera />
+                                    <span>Sélectionner une photo</span>
+                                 </div>
+                                 <Input
+                                    className="hidden"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) =>
+                                       handleImageSelect(e, field.onChange)
+                                    }
+                                 />
+                              </label>
                            </FormControl>
                            <FormMessage />
                         </FormItem>

@@ -13,6 +13,7 @@ import BiographyPopUpForm from "@/components/forms/user/BiographyPopUpForm";
 import SettingsMenu from "@/components/user/profile/SettingsMenu";
 import UpdateProfileForm from "@/components/user/profile/UpdateProfileForm";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 interface ProfilPageProps {
    params: {
@@ -27,7 +28,7 @@ const page = async ({ params, userId }: ProfilPageProps) => {
       <div className="">
          <div className="bg-gradient-to-b from-gray-500 to-background ">
             {/* Haut */}
-            <div className="max-w-[1400px] m-auto">
+            <div className="max-w-[1400px] m-auto pt-[65px]">
                {/* Cover picture & informations */}
                <section>
                   {/* Cover picture */}
@@ -59,9 +60,14 @@ const page = async ({ params, userId }: ProfilPageProps) => {
                         </Avatar>
                         {/* Name, Hashtag */}
                         <div className="flex flex-col items-start pb-2 2xl:pb-6">
-                           <p className="font-semibold text-xl 2xl:text-3xl capitalize">
-                              {user?.firstName} {user?.lastName}
-                           </p>
+                           <div className="flex items-center gap-2">
+                              <p className="font-semibold text-xl 2xl:text-3xl capitalize">
+                                 {user?.firstName} {user?.lastName}
+                              </p>
+                              {user?.isOwner && (
+                                 <Badge variant="success">Propriétaire</Badge>
+                              )}
+                           </div>
                            <p className="text-xs 2xl:text-md">
                               @{user?.pseudo}
                            </p>
@@ -131,7 +137,9 @@ const page = async ({ params, userId }: ProfilPageProps) => {
                         password={user?.password ?? ""}
                      />
                   </div>
-                  <div className="mb-10 text-sm mx-2 md:mx-10">guofehgodisjg</div>
+                  <div className="mb-10 text-sm mx-2 md:mx-10">
+                     guofehgodisjg
+                  </div>
                </section>
             </div>
          </div>

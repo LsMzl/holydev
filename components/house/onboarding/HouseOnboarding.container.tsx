@@ -2,50 +2,40 @@
 import { useState } from "react";
 
 // Types
-import { OnboardingStepsListInterface } from "@/types/onboardingTypes";
+
+import { OnboardingStepsListInterface } from "@/types/houseOnboardingTypes";
 
 // Components
-import WelcomeStep from "./steps/WelcomeStep";
+import OnboardingView from "./HouseOnboarding.view";
 import FirstStep from "./steps/FirstStep";
-import SecondStep from "./steps/SecondStep";
 import LastStep from "./steps/LastStep";
-import OnboardingView from "./Onboarding.view";
+import { Category, Feature } from "@prisma/client";
 
-interface OnboardingProps {
-   user: {
-      id?: string;
-      email?: string;
-      password?: boolean;
-      phone?: string | null | undefined;
-      image?: string;
-   };
-   dbUser: {
-      id?: string | undefined;
-      firstName?: string | undefined | null;
-      lastName?: string | undefined | null;
-      pseudo?: string | undefined | null;
-      phone?: string | undefined | null;
-      profilePicture?: string | undefined | null;
+interface HouseOnboardingProps {
+   house: {
+      id?: string | undefined | null;
+      title?: string | undefined | null;
+      intro?: string | undefined | null;
+      description?: string | undefined | null;
       country?: string | undefined | null;
       state?: string | undefined | null;
+      city?: string | undefined | null;
       address?: string | undefined | null;
-      biography?: string | undefined | null;
-      languages?: string | undefined | null;
-      password?: string | undefined | null;
-      email?: string | undefined | null;
    };
+   categories: Category[];
+   equipements: Feature[];
 }
 
-const OnboardingContainer = ({ user, dbUser }: OnboardingProps) => {
+
+const HouseOnboardingContainer = ({house, categories, equipements}: HouseOnboardingProps) => {
    /** --ETAPES DE L'ONBOARDING-- **/
 
    const [currentStep, setCurrentStep] = useState<number>(1);
 
    const stepsList: OnboardingStepsListInterface[] = [
-      { id: 1, label: "Welcome", component: { step: WelcomeStep } },
-      { id: 2, label: "FirstStep", component: { step: FirstStep } },
-      { id: 3, label: "SecondStep", component: { step: SecondStep } },
-      { id: 4, label: "LastStep", component: { step: LastStep } },
+      { id: 1, label: "FirstStep", component: { step: FirstStep } },
+      { id: 2, label: "LastStep", component: { step: LastStep } },
+
    ];
 
    // Mise en place du système de navigation entre les étapes de l'onboarding
@@ -87,10 +77,11 @@ const OnboardingContainer = ({ user, dbUser }: OnboardingProps) => {
          isFirstStep={isFirstStep}
          isFinalStep={isFinalStep}
          stepsList={stepsList}
-         user={user}
-         dbUser={dbUser}
+         house={house}
+         categories={categories}
+         equipements={equipements}
       />
    );
 };
 
-export default OnboardingContainer;
+export default HouseOnboardingContainer;

@@ -2,7 +2,6 @@ import HousesList from "@/components/home/HousesList";
 
 import { getAllHouses } from "../../queries/getAllHouses";
 import { getAllCategories } from "@/queries/getAllCategories";
-import CategoriesCarousel from "@/components/home/Carousel";
 import SideNav from "@/components/navigation/SideNav";
 import { auth } from "@clerk/nextjs/server";
 import { getUserByClerkId } from "@/queries/getUserByClerkId";
@@ -32,8 +31,8 @@ export default async function Home({ searchParams }: HousesProps) {
 
    if (!houses) return <div>Aucune annonce trouvée</div>;
    return (
-      <div className="flex w-full px-2">
-         <div className="lg:w-[23%] 2xl:w-[18%]">
+      <div className="flex w-full min-h-screen">
+         <div className="lg:w-[23%] 2xl:w-[15%]">
             <SideNav
                userMail={connectedUser?.email}
                userAvatar={connectedUser?.profilePicture}
@@ -43,10 +42,11 @@ export default async function Home({ searchParams }: HousesProps) {
                userId={connectedUser?.clerkId}
             />
          </div>
-         <div className="pt-2 w-[100%] lg:w-[77%] 2xl:w-[82%]">
+         <div className="pt-8 w-[100%] lg:w-[77%] 2xl:w-[85%]">
+         <Spacing size="sm" />
             <LastHousesCarousel house={lastHouses} />
             <Spacing size="xs" />
-            <HousesList houses={houses} categories={categories} /> 
+            <HousesList houses={houses} categories={categories} />
          </div>
       </div>
    );

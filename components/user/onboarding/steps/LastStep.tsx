@@ -8,7 +8,6 @@ import { useRouter } from "next/navigation";
 import { ComponentsProps } from "@/types/onboardingTypes";
 
 // Components
-import OnboardingNav from "../navigation/OnboardingNav";
 import { toast } from "@/components/ui/use-toast";
 import {
    Form,
@@ -23,6 +22,7 @@ import * as z from "zod";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
+import HouseOnboardingNav from "@/components/house/onboarding/HouseOnboardingNavigation";
 
 const formSchema = z.object({
    isOnboardingCompleted: z.boolean(),
@@ -82,7 +82,7 @@ const LastStep = ({ isFinalStep }: ComponentsProps) => {
                      </FormItem>
                   )}
                />
-               <OnboardingNav
+               <HouseOnboardingNav
                   next={form.handleSubmit(handleCloseOnboarding)}
                   isFinalStep={isFinalStep}
                />

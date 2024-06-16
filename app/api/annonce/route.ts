@@ -21,20 +21,19 @@ export async function POST(req: Request) {
         if(!userId){
             return new NextResponse('Non autorisé', {status: 401})
         }
+        console.log(body)
 
         const house = await db.house.create({
             data: {
                 ...body,
-                //! A décommenter si problème
-                // ownerId,
                 ownerId: userId,
-                // ownerId: userId,
-                // owner: "Louis Mazzella" 
-                
             }
         })
+        
 
-        return NextResponse.json(house);
+        return NextResponse.json({
+            house,
+        });
 
     } catch (error) {
         console.log('Error at api/annonce POST', error)

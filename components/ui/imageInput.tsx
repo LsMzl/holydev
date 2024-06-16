@@ -10,7 +10,7 @@ export interface ImageInputProps
    handleImageSelect: (event: React.ChangeEvent<HTMLInputElement>) => void;
    imagePreview: string | ArrayBuffer | null;
    uploadProgress: number;
-   userMail?: string;
+   userMail?: string | null | undefined;
 }
 
 const ImageInput = React.forwardRef<HTMLInputElement, ImageInputProps>(

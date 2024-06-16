@@ -8,7 +8,10 @@ const WelcomeStep = ({
    isFinalStep,
    stepsList,
    getCurrentStep,
+   user,
+   dbUser
 }: ComponentsProps) => {
+
    return (
       <section className="w-full h-screen flex items-center justify-center">
          <div className="flex flex-col justify-center items-center">

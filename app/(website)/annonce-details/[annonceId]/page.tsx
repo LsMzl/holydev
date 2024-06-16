@@ -16,7 +16,9 @@ interface HouseDetailsProps {
 
 const AnnonceDetails = async ({ params }: HouseDetailsProps) => {
    const house = await getHouseById(params.annonceId);
+
    if (!house) return <div>Oups, l'annonce n'a pas été trouvée</div>;
+
 
    /** Contient toutes les réservations d'une maison */
    const bookings = await getBookings(house?.id);

@@ -16,17 +16,11 @@ import {
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, Mail, Phone } from "lucide-react";
 import { PasswordInput } from "@/components/ui/passwordInput";
 import { ComponentsProps } from "@/types/onboardingTypes";
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "@/components/ui/use-toast";
-import { User } from "@prisma/client";
-
-interface FirstStepProps {
-   user: User | null;
-}
 
 const formSchema = z.object({
    firstName: z.string().min(2, {
@@ -57,24 +51,25 @@ const FirstStep = (
       isFinalStep,
       stepsList,
       getCurrentStep,
+      user,
+      dbUser
    }: ComponentsProps,
-   { user }: FirstStepProps
 ) => {
    const [isLoading, setIsLoading] = useState(false);
 
    const form = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
       defaultValues: {
-         firstName: user?.firstName || "",
-         lastName: user?.lastName || "",
-         pseudo: user?.pseudo || "",
+         firstName: dbUser?.firstName || "",
+         lastName: dbUser?.lastName || "",
+         pseudo: dbUser?.pseudo || "",
          email: user?.email || "",
-         phone: user?.phone || "",
-         password: user?.password || "",
+         password: dbUser?.password || "",
       },
    });
 
    function onSubmit(values: z.infer<typeof formSchema>) {
+      console.log('onSubmit', values);
       setIsLoading(true);
       axios
          .post("/api/user/onboarding", values)

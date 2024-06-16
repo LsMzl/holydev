@@ -40,8 +40,17 @@ export async function PATCH(
             ...body,
          },
       });
+      const category = await db.categoriesOnHouses.create({
+         data: {
+            categoryId: body.categoryId,
+            houseId: house.id,
+         },
+      });
 
-      return NextResponse.json(house);
+      return NextResponse.json({
+         house,
+         category,
+      });
    } catch (error) {
       console.log("Error at api/annonce/annonceId PATCH", error);
       return new NextResponse("Internal server error", { status: 500 });

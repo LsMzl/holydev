@@ -1,16 +1,16 @@
-import { ComponentsProps } from "@/types/onboardingTypes";
+import { ComponentsProps } from "@/types/houseOnboardingTypes";
 
-const OnboardingView = ({
+const HouseOnboardingView = ({
    getCurrentStep,
    next,
    previous,
    isFirstStep,
    isFinalStep,
    stepsList,
-   user,
-   dbUser
+   house,
+   categories,
+   equipements
 }: ComponentsProps) => {
-
    //? Si un composant correspond à l'étape en cours, affichage du composant
    if (getCurrentStep()?.component) {
       const Component = getCurrentStep()?.component.step;
@@ -25,8 +25,9 @@ const OnboardingView = ({
                   isFirstStep={isFirstStep}
                   isFinalStep={isFinalStep}
                   stepsList={stepsList}
-                  user={user}
-                  dbUser={dbUser}
+                  house={house}
+                  categories={categories}
+                  equipements={equipements}
                />
             )}
          </div>
@@ -36,4 +37,4 @@ const OnboardingView = ({
    return null;
 };
 
-export default OnboardingView;
+export default HouseOnboardingView;

@@ -37,7 +37,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 // Datas
-import { Category, House } from "@prisma/client";
+import { Category, Feature, House } from "@prisma/client";
 
 // Libraries
 import * as z from "zod";
@@ -53,6 +53,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 interface AddHouseProps {
    house: House | null;
    categories: Category[];
+   equipements: Feature[];
 }
 
 /** Schéma du formulaire. */
@@ -81,6 +82,20 @@ const formSchema = z.object({
    price: z.coerce.number().min(1, {
       message: "Le prix doit être supérieur à 0",
    }),
+   bedroom: z.coerce.number().min(1, {
+      message: "Vous devez posséder au moins 1 chambre",
+   }),
+   kitchen: z.coerce.number().min(1, {
+      message: "Vous devez posséder au moins 1 cuisine",
+   }),
+   bathroom: z.coerce.number().min(1, {
+      message: "Vous devez posséder au moins 1 salle de bain",
+   }),
+   // equipements: z
+   //    .array(z.string())
+   //    .refine((value) => value.some((item) => item), {
+   //       message: "You have to select at least one item.",
+   //    }),
    categories: z
       .array(z.string())
       .refine((value) => value.some((item) => item), {
@@ -89,6 +104,7 @@ const formSchema = z.object({
 });
 
 const AddHouseForm = ({ house, categories }: AddHouseProps) => {
+
    const { toast } = useToast();
    const router = useRouter();
 
@@ -107,17 +123,20 @@ const AddHouseForm = ({ house, categories }: AddHouseProps) => {
 
    const form = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
-      //! Ajouter defaultValues: house || {
-      defaultValues: house || {
-         title: "",
-         description: "",
-         address: "",
-         city: "",
-         country: "",
-         state: "",
-         image: "",
-         price: 0,
+      defaultValues: {
+         title: house?.title ?? "",
+         description: house?.description ?? "",
+         address: house?.address ?? "",
+         city: house?.city ?? "",
+         country: house?.country ?? "",
+         state: house?.state ?? "",
+         image: house?.image ?? "",
+         price: house?.price ?? 0,
+         bedroom: house?.bedroom ?? 0,
+         kitchen: house?.kitchen ?? 0,
+         bathroom: house?.bathroom ?? 0,
          categories: [],
+         // equipements: [],
       },
    });
 
@@ -273,9 +292,9 @@ const AddHouseForm = ({ house, categories }: AddHouseProps) => {
    };
 
    return (
-      <Container className="bg-red-200">
+      <Container className="pt-20">
          <Form {...form}>
-            <Typography className="text-center mb-5" variant="h4" balise="h1">
+            <Typography className="text-center mb-10" variant="h4" balise="h1">
                {house ? "Modifier une annonce" : "Ajouter une annonce"}
             </Typography>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -335,53 +354,231 @@ const AddHouseForm = ({ house, categories }: AddHouseProps) => {
                            </FormItem>
                         )}
                      />
+
                      {/* Catégories */}
                      <div className="mb-5">
-                        <FormLabel>Catégories</FormLabel>
-                        <FormDescription>
-                           Cochez les catégories qui représentent votre logement
-                        </FormDescription>
+                        <FormField
+                           control={form.control}
+                           name="categories"
+                           render={() => (
+                              <FormItem>
+                                 <div>
+                                    <FormLabel>
+                                       Catégories{" "}
+                                       <span className="text-red-500">*</span>
+                                    </FormLabel>
+                                    <FormDescription className="mt-1">
+                                       Cochez les catégories qui représentent
+                                       votre logement
+                                    </FormDescription>
+                                 </div>
+                                 <div className="grid grid-cols-3 xl:grid-cols-5 2xl:grid-cols-6 gap-5 mt-2">
+                                    {categories.map((category) => (
+                                       <FormField
+                                          key={uuidv4()}
+                                          control={form.control}
+                                          name="categories"
+                                          render={({ field }) => (
+                                             <FormItem
+                                                key={uuidv4()}
+                                                className="flex flex-row items-end gap-3"
+                                             >
+                                                <FormControl>
+                                                   <Checkbox
+                                                      checked={field.value?.includes(
+                                                         category.id
+                                                      )}
+                                                      onCheckedChange={(
+                                                         checked
+                                                      ) => {
+                                                         return checked
+                                                            ? field.onChange([
+                                                                 ...field.value,
+                                                                 category.id,
+                                                              ])
+                                                            : field.onChange(
+                                                                 field.value?.filter(
+                                                                    (value) =>
+                                                                       value !==
+                                                                       category.id
+                                                                 )
+                                                              );
+                                                      }}
+                                                   />
+                                                </FormControl>
+                                                <FormLabel>
+                                                   {category.name}
+                                                </FormLabel>
+                                             </FormItem>
+                                          )}
+                                       />
+                                    ))}
+                                 </div>
+                                 <FormMessage />
+                              </FormItem>
+                           )}
+                        />
+                     </div>
+                     {/* Equipements */}
+                     {/* <div className="mb-5">
+                        <FormField
+                           control={form.control}
+                           name="categories"
+                           render={() => (
+                              <FormItem>
+                                 <div>
+                                    <FormLabel>
+                                       Equipements{" "}
+                                       <span className="text-red-500">*</span>
+                                    </FormLabel>
+                                    <FormDescription className="mt-1">
+                                       Cochez les équipements dont dispose votre
+                                       logement
+                                    </FormDescription>
+                                 </div>
+                                 <div className="grid grid-cols-3 xl:grid-cols-5 2xl:grid-cols-6 gap-5 mt-2">
+                                    {categories.map((category) => (
+                                       <FormField
+                                          key={uuidv4()}
+                                          control={form.control}
+                                          name="categories"
+                                          render={({ field }) => (
+                                             <FormItem
+                                                key={uuidv4()}
+                                                className="flex flex-row items-end gap-3"
+                                             >
+                                                <FormControl>
+                                                   <Checkbox
+                                                      checked={field.value?.includes(
+                                                         category.id
+                                                      )}
+                                                      onCheckedChange={(
+                                                         checked
+                                                      ) => {
+                                                         return checked
+                                                            ? field.onChange([
+                                                                 ...field.value,
+                                                                 category.id,
+                                                              ])
+                                                            : field.onChange(
+                                                                 field.value?.filter(
+                                                                    (value) =>
+                                                                       value !==
+                                                                       category.id
+                                                                 )
+                                                              );
+                                                      }}
+                                                   />
+                                                </FormControl>
+                                                <FormLabel>
+                                                   {category.name}
+                                                </FormLabel>
+                                             </FormItem>
+                                          )}
+                                       />
+                                    ))}
+                                 </div>
+                                 <FormMessage />
+                              </FormItem>
+                           )}
+                        />
+                     </div> */}
 
-                        <div className="grid grid-cols-3 gap-4 mt-2">
-                           {categories.map((category) => (
+                     {/* Features */}
+                     <div>
+                        <Typography
+                           variant="body-sm"
+                           balise="h3"
+                           className="font-medium"
+                        >
+                           Nombre de pièces
+                        </Typography>
+                        <div className="flex justify-between gap-5">
+                           {/* Chambres */}
+                           <div className="flex-1">
                               <FormField
-                                 key={uuidv4()}
                                  control={form.control}
-                                 name="categories"
+                                 name="bedroom"
                                  render={({ field }) => (
-                                    <FormItem
-                                       key={uuidv4()}
-                                       className="flex flex-row items-end gap-3"
-                                    >
+                                    <FormItem>
+                                       <FormLabel className="text-xs">
+                                          Chambre{" "}
+                                          <span className="text-red-500">
+                                             *
+                                          </span>
+                                       </FormLabel>
                                        <FormControl>
-                                          <Checkbox
-                                             checked={field.value?.includes(
-                                                category.id
-                                             )}
-                                             onCheckedChange={(checked) => {
-                                                return checked
-                                                   ? field.onChange([
-                                                        ...field.value,
-                                                        category.id,
-                                                     ])
-                                                   : field.onChange(
-                                                        field.value?.filter(
-                                                           (value) =>
-                                                              value !==
-                                                              category.id
-                                                        )
-                                                     );
-                                             }}
+                                          <Input
+                                             type="number"
+                                             min="1"
+                                             max="10"
+                                             step="1"
+                                             {...field}
                                           />
                                        </FormControl>
-                                       <FormLabel>{category.name}</FormLabel>
+                                       <FormMessage />
                                     </FormItem>
                                  )}
                               />
-                           ))}
+                           </div>
+                           {/* Cuisine */}
+                           <div className="flex-1">
+                              <FormField
+                                 control={form.control}
+                                 name="kitchen"
+                                 render={({ field }) => (
+                                    <FormItem>
+                                       <FormLabel className="text-xs">
+                                          Cuisine{" "}
+                                          <span className="text-red-500">
+                                             *
+                                          </span>
+                                       </FormLabel>
+                                       <FormControl>
+                                          <Input
+                                             type="number"
+                                             min="1"
+                                             max="10"
+                                             step="1"
+                                             {...field}
+                                          />
+                                       </FormControl>
+                                       <FormMessage />
+                                    </FormItem>
+                                 )}
+                              />
+                           </div>
+                           {/* Salle de bains */}
+                           <div className="flex-1">
+                              <FormField
+                                 control={form.control}
+                                 name="bathroom"
+                                 render={({ field }) => (
+                                    <FormItem>
+                                       <FormLabel className="text-xs">
+                                          Salle de bain{" "}
+                                          <span className="text-red-500">
+                                             *
+                                          </span>
+                                       </FormLabel>
+                                       <FormControl>
+                                          <Input
+                                             type="number"
+                                             min="1"
+                                             max="10"
+                                             step="1"
+                                             {...field}
+                                          />
+                                       </FormControl>
+                                       <FormMessage />
+                                    </FormItem>
+                                 )}
+                              />
+                           </div>
                         </div>
                      </div>
 
+                     {/* Price */}
                      <FormField
                         control={form.control}
                         name="price"
@@ -397,6 +594,9 @@ const AddHouseForm = ({ house, categories }: AddHouseProps) => {
                               <FormControl>
                                  <Input
                                     type="number"
+                                    min="30"
+                                    max="5000"
+                                    step="5"
                                     placeholder="130"
                                     {...field}
                                  />

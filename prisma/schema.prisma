@@ -20,8 +20,8 @@ model User {
   // Informations
   firstName        String?
   lastName         String?
-  pseudo           String?  @unique
-  phone            String?  @unique
+  pseudo           String?  
+  phone            String?  
   profilePicture   String?  @db.LongText
   coverPicture     String?  @db.LongText
   // Localisation
@@ -36,43 +36,56 @@ model User {
   // Identifiants
   email            String   @unique
   password         String
-  isEmailConfirmed Boolean  @default(false)
   // Création, modification
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+  // Propriétaire ou non
+  isOwner          Boolean  @default(false)
   // Onboarding
   isOnboardingCompleted Boolean @default(false)
-  // Maisons
-  //! Un utilisateur peut avoir plusieurs maisons
+
+  //! Un utilisateur peut avoir 1 ou plusieurs maisons
   houses House[]
+  //! Un utilisateur peut ecrire 1 ou plusieurs avis
+  opinions Opinion[]
+  //! Un utilisateur peut appartenir à 1 ou plusieurs groupes
+  groups UsersOnGroups[]
+  //! Un utilisateur peut mettre 1 ou plusieurs likes
+  likes Like[]
+  //! Un utilisateur peut écrire 1 ou plusieurs posts
+  posts Post[]
+  //! Un utilisateur peut ecrires plusieurs commentaires
+  comments Comment[]
+  //! Un utilisateur peut avoir 0 ou plusieurs favoris
+  favourites Favourite[]
 
-  
-  Sessions          Session[]
-  VerificationToken VerificationToken[]
-  // Avis client
-  // Opinions          Opinion[]
+  // Sessions          Session[]
+  // VerificationToken VerificationToken[]
 }
 
-model Session {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  expiresAt DateTime
-  handle    String   @unique
-  user      User?    @relation(fields: [userId], references: [id])
-  userId    String?
+//* Avis clients sur les maisons
+model Opinion {
+  id       String @id @default(uuid())
+  //! Un avis n'a qu'un seul auteur
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String
+  //! Un avis concerne une seule maison
+  house    House  @relation(fields: [houseId], references: [id], onDelete: Cascade)
+  houseId  String
+
+  @@index([authorId])
+  @@index([houseId])
 }
 
-model VerificationToken {
-  id        Int      @id @default(autoincrement())
-  token     String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  expiresAt DateTime
-  user      User?    @relation(fields: [userId], references: [id])
-  userId    String?
+//* Groupes d'utilisateurs
+model Group {
+  id       String @id @default(uuid())
+  name String
+  //! Un groupe peut avoir 1 ou plusieurs utilisateurs
+  users    UsersOnGroups[]
 }
 
+//* Annonces
 model House {
   id          String   @id @default(uuid())
   // Localisation
@@ -86,42 +99,49 @@ model House {
   // Informations
   title       String?  @db.Text
   image       String
+  introduction String?
   description String?  @db.LongText
   // Propriétaire
   ownerId     String
+  price       Int
+  // Features
+  bedroom    Int
+  kitchen    Int
+  bathroom   Int
 
-  price      Int
-  // Équipements etc...
+  // Relations
+  //! Many to Many catégories
   categories CategoriesOnHouses[]
-  // equipments  Equipment @relation(fields: [equipmentId], references: [id])
-  // equipmentId String
-  // features    Feature   @relation(fields: [featureId], references: [id])
-  // featureId   String
+  //! Many to Many équipements
+  features FeaturesOnHouses[]
   // Avis client
-  // Opinions    Opinion[]
-
+  //! Une maison peut avoir 0 ou plusieurs avis
+  Opinions  Opinion[]
   // Réservations
   //! Une maison peut avoir plusieurs réservations
   bookings Booking[]
-
   //! Une maison n'a qu'un seul propriétaire
   user           User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId         String?
+  //! Une maison peut être dans 0 ou plusieurs favoris
+  favourites Favourite[]
+  
 
-  // @@index([ownerId])
+  @@index([ownerId])
 }
 
-// model Opinion {
-//   id       String @id @default(uuid())
-//   author   User   @relation(fields: [authorId], references: [id])
-//   authorId String
-//   house    House  @relation(fields: [houseId], references: [id], onDelete: Cascade)
-//   houseId  String
+//* Favoris utilisateur
+model Favourite {
+  id        String               @id @default(uuid())
+  //! Un favorite ne concerne qu'une seule maison
+  house   House   @relation(fields: [houseId], references: [id], onDelete: Cascade)
+  houseId String
+  //! Un favorite n'appartient qu'à un seul utilisateur
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+}
 
-//   @@index([authorId])
-//   @@index([houseId])
-// }
-
+//* Catégories de maisons
 model Category {
   id        String               @id @default(uuid())
   name      String
@@ -133,30 +153,18 @@ model Category {
   houses    CategoriesOnHouses[]
 }
 
-//! Many to many entre catégories et maisons
-model CategoriesOnHouses {
-  house      House    @relation(fields: [houseId], references: [id])
-  houseId    String
-  category   Category @relation(fields: [categoryId], references: [id])
-  categoryId String
-
-  @@id([houseId, categoryId])
-}
-
-model Equipment {
+//* Equipements de maisons (wifi, parking, etc...)
+model Feature {
   id   String  @id @default(uuid())
   name String
-  logo String?
-  // house House[]
+  image String?
+  // Création, modification
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @default(now())
+  houses    FeaturesOnHouses[]
 }
 
-// model Feature {
-//   id       String @id @default(uuid())
-//   name     String
-//   quantity Int
-//   house    House[]
-// }
-
+//* Réservations
 model Booking {
   id              String   @id @default(uuid())
   // Personne qui réserve
@@ -183,8 +191,121 @@ model Booking {
 
   @@index([houseId])
 }
+//* Publications
+model Post {
+  id              String   @id @default(uuid())
+  content String?  @db.Text
+  image String?
+  //! Un post n'a qu'un seul auteur
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String
+  //! Un post peut avoir 0 et plusieurs commentaires
+  comments Comment[]
+  //! Un post peut avoir 0 et plusieurs likes
+  likes Like[]
+}
+
+//* Commentaires sur les posts
+model Comment {
+  id              String   @id @default(uuid())
+  content String?  @db.Text
+  //! Un commentaire n'a qu'un seul auteur
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String
+  //! Un commentaire n'a qu'un seul post
+  post   Post   @relation(fields: [postId], references: [id])
+  postId String
+  //! Un commentaire peut avoir 0 et plusieurs likes
+  likes Like[]
+  //! Un commentaire peut avoir 0 et plusieurs commentaires
+
+}
+
+//* Likes sur les posts
+model Like {
+  id              String   @id @default(uuid())
+  //! Un like n'a qu'un seul post
+  post   Post   @relation(fields: [postId], references: [id])
+  postId String
+  //! Un like n'a qu'un seul commentaire
+  comment   Comment   @relation(fields: [commentId], references: [id])
+  commentId String
+  //! Un like n'a qu'un seul auteur
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String
+}
+
+
+
+
+
+
+//! Many to many entre groupes et users
+model UsersOnGroups {
+  group   Group     @relation(fields: [groupId], references: [id])
+  groupId String
+  user      User    @relation(fields: [userId], references: [id])
+  userId    String
+
+  @@id([groupId, userId])
+}
+
+//! Many to many entre catégories et maisons
+model CategoriesOnHouses {
+  house      House    @relation(fields: [houseId], references: [id])
+  houseId    String
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String
+
+  @@id([houseId, categoryId])
+}
+
+//! Many to many entre équipements et maisons
+model FeaturesOnHouses {
+  house      House    @relation(fields: [houseId], references: [id])
+  houseId    String
+  feature   Feature @relation(fields: [featureId], references: [id])
+  featureId String
+
+  @@id([houseId, featureId])
+}
+
 
 enum Role {
   USER
   ADMIN
 }
+
+
+
+// model Session {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+//   expiresAt DateTime
+//   handle    String   @unique
+//   user      User?    @relation(fields: [userId], references: [id])
+//   userId    String?
+// }
+
+// model VerificationToken {
+//   id        Int      @id @default(autoincrement())
+//   token     String   @unique
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+//   expiresAt DateTime
+//   user      User?    @relation(fields: [userId], references: [id])
+//   userId    String?
+// }
+
+
+
+
+
+
+
+
+
+
+
+
