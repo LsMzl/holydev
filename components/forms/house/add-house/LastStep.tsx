@@ -134,6 +134,8 @@ const LastStep = ({
                description: "Annonce créée avec succès !",
             });
             setIsLoading(false);
+            localStorage.clear();
+            router.push(`/annonce-details/${house?.id}`);
          })
          .catch((error) => {
             console.log(error);
@@ -143,7 +145,6 @@ const LastStep = ({
                   "Une erreur est survenue lors de la création de l'annonce",
             });
             setIsLoading(false);
-            router.push(`/annonce-details/${house?.id}`);
          });
    }
 
@@ -407,7 +408,7 @@ const LastStep = ({
                                                 {types?.map((type) => (
                                                    <SelectItem
                                                       key={type.name}
-                                                      value={type.id}
+                                                      value={type.name}
                                                    >
                                                       {type.name}
                                                    </SelectItem>
@@ -450,7 +451,7 @@ const LastStep = ({
                                                 {categories?.map((category) => (
                                                    <SelectItem
                                                       key={category.name}
-                                                      value={category.id}
+                                                      value={category.name}
                                                    >
                                                       {category.name}
                                                    </SelectItem>
@@ -488,7 +489,7 @@ const LastStep = ({
                                                    <FormControl>
                                                       <Checkbox
                                                          checked={field.value?.includes(
-                                                            equipement.id
+                                                            equipement.name
                                                          )}
                                                          onCheckedChange={(
                                                             checked
@@ -497,7 +498,7 @@ const LastStep = ({
                                                                ? field.onChange(
                                                                     [
                                                                        ...field.value,
-                                                                       equipement.id,
+                                                                       equipement.name,
                                                                     ]
                                                                  )
                                                                : field.onChange(
@@ -506,7 +507,7 @@ const LastStep = ({
                                                                           value
                                                                        ) =>
                                                                           value !==
-                                                                          equipement.id
+                                                                          equipement.name
                                                                     )
                                                                  );
                                                          }}

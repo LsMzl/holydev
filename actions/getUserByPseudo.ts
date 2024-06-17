@@ -1,16 +1,16 @@
 import { db } from "@/lib/db";
 
 /**
- * Récupère un utilisateur grâce à l'identifiant de clerk.
+ * Récupère un utilisateur grâce à son id.
  * @param userId String - Id de l'utilisateur recherché.
  * @returns Utilisateur trouvé
- * @creation 11.06.2024 - Louis Mazzella
+ * @creation 07.06.2024 - Louis Mazzella
  */
-export const getUserByClerkId = async (userId: string) => {
+export const getUserByPseudo = async (userPseudo: string) => {
    try {
       const user = await db.user.findUnique({
          where: {
-            clerkId: userId,
+            pseudo: userPseudo,
          },
       });
 

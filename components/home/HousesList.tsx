@@ -11,15 +11,13 @@ import { usePathname, useRouter } from "next/navigation";
 import CategoriesCarousel from "./Carousel";
 
 const HousesList = ({
-   houses,
-   user,
    categories,
    houseTypes,
+   houses
 }: {
-   houses: House[];
-   user?: User | null;
    categories: Category[];
    houseTypes: HouseType[];
+   houses: House[];
 }) => {
    const router = useRouter();
 
@@ -52,8 +50,8 @@ const HousesList = ({
             </div>
          </div>
          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-5 gap-y-5 mt-4">
-            {houses.map((house) => (
-               <HouseCard key={uuidv4()} house={house} user={user} />
+            {houses.map((house: any) => (
+               <HouseCard key={uuidv4()} house={house} />
             ))}
          </div>
       </Container>

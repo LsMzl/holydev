@@ -8,7 +8,7 @@ import { Banknote, Star, Tag, UserIcon } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 
-const HouseCard = ({ house, user }: { house: House; user?: User | null }) => {
+const HouseCard = ({ house}: { house: House}) => {
    const router = useRouter();
 
    const pathName = usePathname();
@@ -22,7 +22,7 @@ const HouseCard = ({ house, user }: { house: House; user?: User | null }) => {
          {/* Illustration */}
          <div className=" h-[150px] relative rounded-lg aspect-square w-full hover:scale-100">
             <Image
-               src={house.image}
+               src={house.image ?? ""}
                fill
                sizes="100%"
                alt="Photo d'une maison"
@@ -54,7 +54,7 @@ const HouseCard = ({ house, user }: { house: House; user?: User | null }) => {
                <span className="flex items-center gap-1">
                   <UserIcon size={15} />
                   <p className="text-xs capitalize">
-                     {user?.firstName} {user?.lastName}
+                     {/* {house.user?.firstName} {user?.lastName} */}
                   </p>
                </span>
                {/* Liste des catégories */}

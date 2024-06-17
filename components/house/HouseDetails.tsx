@@ -37,17 +37,21 @@ import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { toast } from "../ui/use-toast";
 import { DateRangePicker } from "./DateRangePicker";
+import { Badge } from "../ui/badge";
+import AddOpinionForm from "../forms/addOpinionForm";
+import { Separator } from "../ui/separator";
+import { dataTypes } from "@/types/dataTypes";
 
+interface HouseDetailsProps {
+   house: any;
+   bookings?: Booking[];
+}
 
-
-const HouseDetails = (
-   { house, bookings, user }: { house: House; bookings?: Booking[]; user: User | null },
-
-) => {
-   console.log("houseUser", user);
+const HouseDetails = ({ house, bookings }: HouseDetailsProps) => {
+   console.log(house.Opinions);
    const { getCountryByCode, getStateByCode } = useLocation();
-   const country = getCountryByCode(house.country);
-   const state = getStateByCode(house.country, house.state);
+   const country = getCountryByCode(house?.country ?? "");
+   const state = getStateByCode(house?.country ?? "", house?.state ?? "");
 
    const { userId } = useAuth();
    const router = useRouter();
@@ -75,19 +79,18 @@ const HouseDetails = (
          // Calcul du prix selon le nombre de jours
          if (dayCount) {
             setTotalPrice(dayCount * house.price);
-         } else {
             // Prix pour une journée
             setTotalPrice(house.price);
          }
       }
-   }, [date, house.price]);
+   }, [date, house?.price]);
 
    /** Dates indisponibles car déjà réservées. */
    const disabledDates = useMemo(() => {
       let dates: Date[] = [];
 
       const houseBookings = bookings?.filter(
-         (booking) => booking.houseId === house.id && booking.paymentStatus
+         (booking) => booking.houseId === house?.id && booking.paymentStatus
       );
 
       // Attribution d'une date de départ et de fin pour chaque réservation
@@ -186,13 +189,24 @@ const HouseDetails = (
          });
       }
    };
-
    return (
-      <Container className="pt-28">
+      <Container className="pt-24 max-w-[1700px] mb-20">
          {/* //TODO: Mettre un carousel */}
-         <div className="flex justify-between items-center mb-3">
-            {/* Titre de l'annonce */}
-            <h1 className="font-medium text-xl md:text-3xl">{house.title}</h1>
+         <div className="flex justify-between items-center ">
+            <div className="flex items-center gap-3">
+               {/* Titre de l'annonce */}
+               <h1 className="font-medium text-xl md:text-3xl">
+                  {house?.title}
+               </h1>
+               <div className="space-x-2">
+                  <Badge variant="outline">
+                     {house?.types[0].houseTypeName}
+                  </Badge>
+                  <Badge variant="outline">
+                     {house?.categories[0].categoryName}
+                  </Badge>
+               </div>
+            </div>
             {/* Share & Save */}
             <div className="flex items-center gap-2 md:gap-5">
                <span className="flex items-center gap-1">
@@ -207,12 +221,14 @@ const HouseDetails = (
                </span>
             </div>
          </div>
+         <p className="mb-3">{house?.introduction}</p>
          {/* Illustration */}
          <div className="relative w-full h-[200px] md:h-[450px] bg-background mb-3 md:mb-10">
             <Image
-               src={house.image}
+               src={house?.image}
                fill
-               alt={house.title ?? ""}
+               alt={house?.title}
+               sizes="100%"
                className="object-cover rounded-xl"
             />
          </div>
@@ -222,10 +238,10 @@ const HouseDetails = (
             <div className="flex flex-col md:w-[70%]">
                {/* Localisation */}
                <div className="flex items-center justify-between">
-                  <div className="flex items-center text-sm md:text-xl">
+                  <div className="flex items-center text-sm md:text-xl gap-2">
                      <MapPin className="h-5 w-5 mr-1" />
                      <p>
-                        {country?.name}, {state?.name}, {house.city}
+                        {country?.name}, {state?.name}, {house?.city}
                      </p>
                   </div>
                   <div className="flex items-center gap-1">
@@ -236,20 +252,20 @@ const HouseDetails = (
 
                {/* Nombre de chambre etc */}
                <ul className="flex items-center text-md font-light">
-                  <li>{house.bedroom} chambres</li>
+                  <li>{house?.bedroom} chambres</li>
                   <span>
                      <Dot size={15} />
                   </span>
-                  <li>{house.kitchen} cuisines</li>
+                  <li>{house?.kitchen} cuisines</li>
                   <span>
                      <Dot size={15} />
                   </span>
-                  <li>{house.bathroom} salles de bain</li>
+                  <li>{house?.bathroom} salles de bain</li>
                </ul>
 
                {/* Pricing */}
                <div className="border-b pb-5 md:pb-8 flex items-center gap-1">
-                  <p className="text-lg font-medium">{house.price} €</p>
+                  <p className="text-lg font-medium">{house?.price} €</p>
                   <p className="text-lg">
                      /<span className="text-sm">nuit</span>{" "}
                   </p>
@@ -259,14 +275,14 @@ const HouseDetails = (
                <Typography className="mt-5 md:mt-8 mb-2 text-md md:text-xl font-medium">
                   En savoir plus sur le logement
                </Typography>
-               <p className="text-sm md:text-base overflow-hidden h-20 md:h-[170px] font-light">
-                  {house.description}
+               <p className="text-sm md:text-base overflow-hidden h-20 font-light">
+                  {house?.description}
                </p>
                {/* Date de mise en ligne */}
                <Typography variant="body-xs" className=" md:pb-5 mt-2">
                   Mis en ligne le{" "}
                   <span className="font-medium">
-                     {format(house.createdAt, "dd MMMM yyyy")}
+                     {format(house?.createdAt ?? 0, "dd MMMM yyyy")}
                   </span>{" "}
                </Typography>
 
@@ -277,25 +293,23 @@ const HouseDetails = (
                <div className="flex items-center justify-between gap-2 mt-3 border rounded-lg shadow px-2 py-2 md:p-3 hover:shadow-none hover:bg-background/80">
                   {/* Lien vers le profil de l'utilisateur */}
                   <Link
-                     href={`/profil/${user?.id}`}
+                     href={`/user/${house.user.pseudo}`}
                      title="Profil de l'utilisateur"
                      className="flex items-center gap-3"
                   >
                      <Avatar>
                         <AvatarImage
-                           src={user?.profilePicture ?? ""}
+                           src={house.user.profilePicture}
                            className="rounded-full h-14 w-14 object-cover"
                         />
                      </Avatar>
 
                      <div className="flex gap-10">
-                        {/* owner pic */}
-                        {/* Owner details */}
                         <div className="flex flex-col w-[220px] md:w-full ">
                            <p className="font-medium capitalize">
-                              {user?.firstName} {user?.lastName}
+                              {house.user.firstName} {house.user.lastName}
                            </p>
-                           <p className="text-sm">{user?.pseudo}</p>
+                           <p className="text-xs">@{house.user.pseudo}</p>
                         </div>
                      </div>
                   </Link>
@@ -311,7 +325,6 @@ const HouseDetails = (
                      <MessageCircle size={25} />
                   </Button>
                   <Button
-                     variant="secondary"
                      title="Contacter l'utilisateur"
                      className="shadow hidden md:block"
                      onClick={() => console.log("contact")}
@@ -324,8 +337,25 @@ const HouseDetails = (
                <Typography className="mt-5 md:mt-8 mb-2 text-md md:text-xl font-medium">
                   Ce que propose ce logement
                </Typography>
-               <div className="w-full h-96 bg-indigo-300">
-                  liste de tous les équipements
+               <div className="w-full ">
+                  <ul className="grid grid-cols-3 space-y-1">
+                     {house.features.map((feature: any) => (
+                        <li key={feature.id}>
+                           <span>
+                              {feature.image && (
+                                 <Image
+                                    src={feature.featureName}
+                                    alt="logo de l'équipement"
+                                    height={20}
+                                    width={20}
+                                    layout="responsive"
+                                 />
+                              )}
+                              <p>{feature.featureName}</p>
+                           </span>
+                        </li>
+                     ))}
+                  </ul>
                </div>
             </div>
 
@@ -370,19 +400,19 @@ const HouseDetails = (
                   <div className="text-lg flex flex-col gap-1 ">
                      <div className="flex items-center justify-between">
                         <p>
-                           {house.price} € x {days} nuits
+                           {house?.price} € x {days} nuits
                         </p>
                         <p>{totalPrice} €</p>
                      </div>
                      <div className="flex items-center justify-between">
                         <p>
-                           {house.price} € x {days} nuits
+                           {house?.price} € x {days} nuits
                         </p>
                         <p>{totalPrice} €</p>
                      </div>
                      <div className="flex items-center justify-between pb-5 border-b">
                         <p>
-                           {house.price} € x {days} nuits
+                           {house?.price} € x {days} nuits
                         </p>
                         <p>{totalPrice} €</p>
                      </div>
@@ -396,53 +426,46 @@ const HouseDetails = (
          </div>
 
          <section>
+            <Separator className="mt-10" />
             {/* Avis */}
-            <div className="mt-5 flex items-center gap-2 border-t pt-5">
-               <Star />
-               <Typography>4.6</Typography>
-               <Typography>561 avis</Typography>
-               <Button variant="outline" className="rounded-full">
-                  Voir tout
-               </Button>
+            <div className="flex justify-between items-center mt-5">
+               <div className="flex items-center gap-2">
+                  <Star />
+                  <Typography>4.6</Typography>
+                  {house.Opinions.length < 1 ? (
+                     <p>Aucun avis n'a été écrit pour le moment</p>
+                  ) : (
+                     <>
+                        <p>{house.Opinions.length} avis</p>
+                        <Button variant="outline" className="rounded-full">
+                           Voir tout
+                        </Button>
+                     </>
+                  )}
+               </div>
+               <div>
+                  <AddOpinionForm house={house} />
+               </div>
             </div>
 
             <div className="flex items-center justify-between gap-8 mt-5 border-b py-5">
-               <div className="flex flex-col items-center justify-between">
-                  <Avatar>
-                     <AvatarImage
-                        src="https://github.com/shadcn.png"
-                        className="rounded-full h-14 w-14"
-                     />
-                  </Avatar>
-                  <Typography variant="body-sm" className="text-center">
-                     Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-                     Exercitationem.
-                  </Typography>
-               </div>
-               <div className="flex flex-col items-center justify-between">
-                  <Avatar>
-                     <AvatarImage
-                        src="https://github.com/shadcn.png"
-                        className="rounded-full h-14 w-14"
-                     />
-                  </Avatar>
-                  <Typography variant="body-sm" className="text-center">
-                     Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-                     Exercitationem.
-                  </Typography>
-               </div>
-               <div className="flex flex-col items-center justify-between">
-                  <Avatar>
-                     <AvatarImage
-                        src="https://github.com/shadcn.png"
-                        className="rounded-full h-14 w-14"
-                     />
-                  </Avatar>
-                  <Typography variant="body-sm" className="text-center">
-                     Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-                     Exercitationem.
-                  </Typography>
-               </div>
+               {house.Opinions.map((opinion: any) => (
+                  <div
+                     className="flex flex-col items-center justify-between"
+                     key={opinion.title}
+                  >
+                     <Avatar>
+                        <AvatarImage
+                           src={opinion.author.profilePicture}
+                           className="rounded-full h-14 w-14"
+                        />
+                     </Avatar>
+                     <p className="text-sm font-medium">{opinion.title}</p>
+                     <p className="text-center max-w-[300px] text-sm">
+                        {opinion.content}
+                     </p>
+                  </div>
+               ))}
             </div>
          </section>
 

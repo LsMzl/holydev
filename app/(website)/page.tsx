@@ -5,7 +5,6 @@ import { getAllCategories } from "@/queries/getAllCategories";
 import SideNav from "@/components/navigation/SideNav";
 import { auth } from "@clerk/nextjs/server";
 import { getUserByClerkId } from "@/queries/getUserByClerkId";
-import { House, User } from "@prisma/client";
 import LastHousesCarousel from "@/components/home/LastHousesCarousel";
 import { getLastHouses } from "@/queries/getLastHouses";
 import Spacing from "@/components/elements/Spacing";
@@ -33,7 +32,7 @@ export default async function Home({ searchParams }: HousesProps) {
 
    if (!houses) return <div>Aucune annonce trouvée</div>;
    return (
-      <div className="flex w-full min-h-screen">
+      <div className="flex w-full min-h-screen mt-14">
          <div className="lg:w-[20%] 2xl:w-[15%]">
             <SideNav
                userMail={connectedUser?.email}

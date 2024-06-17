@@ -12,6 +12,23 @@ export const getHouseById = async (annonceId: string) => {
          },
          include: {
             user: true,
+            categories: true,
+            types: true,
+            features: true,
+            Opinions: {
+               select: {
+                  author: {
+                     select: {
+                        firstName: true,
+                        lastName: true,
+                        profilePicture: true
+                     }
+                  },
+                  title: true,
+                  content: true,
+               }
+            }
+            
          },
       });
 

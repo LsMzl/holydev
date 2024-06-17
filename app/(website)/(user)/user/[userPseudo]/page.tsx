@@ -2,7 +2,7 @@ import Container from "@/components/elements/Container";
 import Image from "next/image";
 import React from "react";
 import Banner from "@/public/img/banniere.jpg";
-import { CameraIcon, Eye } from "lucide-react";
+import { CameraIcon, Eye, MessageSquareText, UserPlus } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
@@ -14,19 +14,20 @@ import SettingsMenu from "@/components/user/profile/SettingsMenu";
 import UpdateProfileForm from "@/components/user/profile/UpdateProfileForm";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { getUserByPseudo } from "@/actions/getUserByPseudo";
 
 interface ProfilPageProps {
    params: {
-      userId: string;
+      userPseudo: string;
    };
    userId: string;
 }
-const MyProfile = async ({ params, userId }: ProfilPageProps) => {
-   const user = await getUserByClerkId(params.userId);
+const UserProfile = async ({ params }: ProfilPageProps) => {
+   const user = await getUserByPseudo(params.userPseudo);
 
    return (
       <div className="">
-         <div className="bg-gradient-to-b from-gray-500 to-background ">
+         <div className="bg-gradient-to-b from-gray-500 to-background">
             {/* Haut */}
             <div className="max-w-[1400px] m-auto pt-[65px]">
                {/* Cover picture & informations */}
@@ -39,10 +40,6 @@ const MyProfile = async ({ params, userId }: ProfilPageProps) => {
                         className="object-cover rounded-b-md"
                         alt=""
                      />
-                     <Button className="absolute z-10 items-center gap-2 right-1 bottom-1 hidden group-hover:flex">
-                        <CameraIcon size={20} />
-                        Changer de photo
-                     </Button>
                   </div>
 
                   <div className="flex justify-between items-start mx-2 md:mx-10 h-16 md:h-20 2xl:h-28 md:border-b md:mb-2">
@@ -68,74 +65,66 @@ const MyProfile = async ({ params, userId }: ProfilPageProps) => {
                                  <Badge variant="success">Propriétaire</Badge>
                               )}
                            </div>
-                           <p className="text-xs 2xl:text-md">
-                              @{user?.pseudo}
-                           </p>
+                           <p className="text-xs md:text-md">@{user?.pseudo}</p>
                         </div>
                      </div>
 
                      {/* Menu Buttons Screen */}
                      <div className=" mt-2 items-center gap-2 hidden md:flex ">
                         <Link
-                           href="/mes-annonces"
+                           href={`/user/${user?.pseudo}/annonces`}
                            className={cn(
                               buttonVariants(),
                               "flex gap-1 font-semibold"
                            )}
                            title="Annonces utilisateur"
                         >
-                           <Eye size={15} /> Mes annonces
+                           <Eye size={15} />
+                           Annonces
                         </Link>
-                        <UpdateProfileForm
-                           biography={user?.biography ?? ""}
-                           avatar={user?.profilePicture ?? ""}
-                           email={user?.email ?? ""}
-                           coverPicture={user?.coverPicture ?? ""}
-                           inscriptionDate={user?.createdAt}
-                        />
-                        <SettingsMenu
-                           firstname={user?.firstName ?? ""}
-                           lastname={user?.lastName ?? ""}
-                           country={user?.country ?? ""}
-                           state={user?.state ?? ""}
-                           city={user?.city ?? ""}
-                           address={user?.address ?? ""}
-                           email={user?.email ?? ""}
-                           phone={user?.phone ?? ""}
-                           password={user?.password ?? ""}
-                        />
+                        <Button
+                           variant="secondary"
+                           className="flex items-center gap-1"
+                        >
+                           <UserPlus size={20} />
+                           S'abonner
+                        </Button>
+                        <Button
+                           variant="secondary"
+                           className="flex items-center gap-1"
+                        >
+                           <MessageSquareText size={20} />
+                           Contacter
+                        </Button>
                      </div>
                   </div>
                   {/* Menu Buttons Mobile */}
                   <div className="items-center flex justify-between mx-2 md:hidden border-b pb-5">
                      <Link
-                        href="/mes-annonces"
+                        href={`/user/${user?.pseudo}/annonces`}
                         className={cn(
                            buttonVariants(),
                            "flex gap-1 font-semibold"
                         )}
                         title="Annonces utilisateur"
                      >
-                        <Eye size={15} /> Mes annonces
+                        <Eye size={15} />
+                        Annonces
                      </Link>
-                     <UpdateProfileForm
-                        biography={user?.biography ?? ""}
-                        avatar={user?.profilePicture ?? ""}
-                        email={user?.email ?? ""}
-                        coverPicture={user?.coverPicture ?? ""}
-                        inscriptionDate={user?.createdAt}
-                     />
-                     <SettingsMenu
-                        firstname={user?.firstName ?? ""}
-                        lastname={user?.lastName ?? ""}
-                        country={user?.country ?? ""}
-                        state={user?.state ?? ""}
-                        city={user?.city ?? ""}
-                        address={user?.address ?? ""}
-                        email={user?.email ?? ""}
-                        phone={user?.phone ?? ""}
-                        password={user?.password ?? ""}
-                     />
+                     <Button
+                        variant="secondary"
+                        className="flex items-center gap-1"
+                     >
+                        <UserPlus size={20} />
+                        S'abonner
+                     </Button>
+                     <Button
+                        variant="secondary"
+                        className="flex items-center gap-1"
+                     >
+                        <MessageSquareText size={20} />
+                        Contacter
+                     </Button>
                   </div>
                   <div className="mb-10 text-sm mx-2 md:mx-10">
                      guofehgodisjg
@@ -215,4 +204,4 @@ const MyProfile = async ({ params, userId }: ProfilPageProps) => {
    );
 };
 
-export default MyProfile;
+export default UserProfile;

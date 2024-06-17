@@ -6,6 +6,7 @@
  */
 
 import { db } from "@/lib/db";
+import { getHouseById } from "@/queries/getHouseById";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
@@ -18,7 +19,6 @@ export async function PATCH(
       const body = await req.json();
       // Récupération de l'id de l'utilisateur connecté.
       const { userId } = auth();
-      // const ownerId = userId
 
       //! Pas d'annonce trouvée
       if (!params.houseId) {
@@ -63,24 +63,24 @@ export async function PATCH(
 
       await db.typesOnHouses.create({
          data: {
-            houseTypeId: body.types,
-            houseId: house.id,
+            houseId: params.houseId,
+            houseTypeName: body.types,
          },
       });
 
       await db.categoriesOnHouses.create({
          data: {
-            categoryId: body.categories,
-            houseId: house.id,
+            houseId: params.houseId,
+            categoryName: body.categories,
          },
       });
 
-    //   await db.featuresOnHouses.create({
-    //      data: {
-    //         featureId: body.equipementId,
-    //         houseId: house.id,
-    //      },
-    //   });
+      await db.featuresOnHouses.createMany({
+         data: body.equipements.map((feature: any) => ({
+            houseId: params.houseId,
+            featureName: feature,
+         })),
+      });
 
       return NextResponse.json(house);
    } catch (error) {

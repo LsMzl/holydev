@@ -1,50 +1,46 @@
 import { db } from "@/lib/db";
 import { getUserByClerkId } from "@/queries/getUserByClerkId";
-import { dataTypes } from "@/types/dataTypes";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-export async function POST(req: Request) {
+export async function POST(
+   req: Request,
+   { params }: { params: { houseId: string } }
+) {
    try {
       // Récuperarion des informations de l'annonce depuis le body.
       const body = await req.json();
       // Récupération de l'id de l'utilisateur connecté.
       const { userId } = auth();
-      // const ownerId = userId
 
       const user = await getUserByClerkId(userId ?? "");
       const dbUser = {
          id: user?.id,
       };
 
-      if (!dbUser) {
-         return new NextResponse("Non autorisé", { status: 401 });
-      }
       if (!userId) {
          return new NextResponse("Non autorisé", { status: 401 });
       }
 
-      const house = await db.house.create({
+      const opinion = await db.opinion.create({
          data: {
-            title: body.title,
-            introduction: body.introduction,
-            description: body.description,
-            country: body.country,
-            state: body.state,
-            city: body.city,
-            address: body.address,
-            ownerId: userId,
-            user: {
+            ...body,
+            author: {
                connect: {
                   id: dbUser.id,
+               },
+            },
+            house: {
+               connect: {
+                  id: params.houseId,
                },
             },
          },
       });
 
-      return NextResponse.json(house);
+      return NextResponse.json(opinion);
    } catch (error) {
-      console.log("Error at api/house POST", error);
+      console.log("Error at api/opinion/[houseId] POST", error);
       return new NextResponse("Internal server error", { status: 500 });
    }
 }

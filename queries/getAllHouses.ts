@@ -25,6 +25,7 @@ export const getAllHouses = async (searchParams: {
         //! Inclure infos du propriétaire, prochaine disponibilité
          include: {
             user: true,
+            types: true,
          },
       });
 

@@ -20,7 +20,7 @@ model User {
   // Informations
   firstName        String?
   lastName         String?
-  pseudo           String?  @unique
+  pseudo           String?  
   phone            String?  
   profilePicture   String?  @db.LongText
   coverPicture     String?  @db.LongText
@@ -66,11 +66,6 @@ model User {
 //* Avis clients sur les maisons
 model Opinion {
   id       String @id @default(uuid())
-  title   String? @db.TinyText
-  content String @db.LongText 
-  // Création, modification
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
   //! Un avis n'a qu'un seul auteur
   author   User   @relation(fields: [authorId], references: [id])
   authorId String
@@ -153,7 +148,7 @@ model Favourite {
 //* Catégories de maisons
 model Category {
   id        String               @id @default(uuid())
-  name      String  @unique
+  name      String
   image     String?
   // Création, modification
   createdAt DateTime             @default(now())
@@ -164,7 +159,7 @@ model Category {
 
 model HouseType {
   id        String               @id @default(uuid())
-  name      String  @unique
+  name      String
   image     String?
   // Création, modification
   createdAt DateTime             @default(now())
@@ -176,7 +171,7 @@ model HouseType {
 //* Equipements de maisons (wifi, parking, etc...)
 model Feature {
   id   String  @id @default(uuid())
-  name String @unique
+  name String
   image String?
   // Création, modification
   createdAt DateTime             @default(now())
@@ -274,30 +269,30 @@ model UsersOnGroups {
 model CategoriesOnHouses {
   house      House    @relation(fields: [houseId], references: [id])
   houseId    String
-  category   Category @relation(fields: [categoryName], references: [name])
-  categoryName String
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String
 
-  @@id([houseId, categoryName])
+  @@id([houseId, categoryId])
 }
 
 //! Many to many entre types et maisons
 model TypesOnHouses {
   house      House    @relation(fields: [houseId], references: [id])
   houseId    String
-  houseType   HouseType @relation(fields: [houseTypeName], references: [name])
-  houseTypeName String
+  houseType   HouseType @relation(fields: [houseTypeId], references: [id])
+  houseTypeId String
 
-  @@id([houseId, houseTypeName])
+  @@id([houseId, houseTypeId])
 }
 
 //! Many to many entre équipements et maisons
 model FeaturesOnHouses {
   house      House    @relation(fields: [houseId], references: [id])
   houseId    String
-  feature   Feature @relation(fields: [featureName], references: [name])
-  featureName String
+  feature   Feature @relation(fields: [featureId], references: [id])
+  featureId String
 
-  @@id([houseId, featureName])
+  @@id([houseId, featureId])
 }
 
 
