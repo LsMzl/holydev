@@ -3,7 +3,7 @@ import React from "react";
 
 import Container from "../elements/Container";
 import { Button } from "../ui/button";
-import { Category } from "@prisma/client";
+import { Category, HouseType } from "@prisma/client";
 import { v4 as uuidv4 } from "uuid";
 
 import {
@@ -16,27 +16,43 @@ import {
 
 interface CategoryFiltersProps {
    category: Category[];
+   houseTypes: HouseType[];
 }
 
-const CategoriesCarousel = ({ category }: CategoryFiltersProps) => {
+const CategoriesCarousel = ({ category, houseTypes }: CategoryFiltersProps) => {
    return (
       <div className="">
          <Carousel
             opts={{
                align: "start",
+               loop: true,
+               dragFree: true,
             }}
+            
             className="w-full relative pt-5"
          >
             <CarouselContent className="-ml-0">
-               <Button size="sm" className="shadow hover:bg-secondary">
+               <Button size="sm" className="shadow hover:bg-secondary ml-4">
                   Tout
                </Button>
 
-               {category.map((item) => (
-                  <CarouselItem key={uuidv4()} className="basis-1/7">
+               {houseTypes.map((item) => (
+                  <CarouselItem key={uuidv4()} className="basis-1/8">
                      <Button
                         size="sm"
-                        className="shadow hover:bg-primary"
+                        className="shadow hover:bg-primary hover:text-black"
+                        key={uuidv4()}
+                        variant="secondary"
+                     >
+                        {item.name}
+                     </Button>
+                  </CarouselItem>
+               ))}
+               {category.map((item) => (
+                  <CarouselItem key={uuidv4()} className="basis-1/8">
+                     <Button
+                        size="sm"
+                        className="shadow hover:bg-primary hover:text-black"
                         key={uuidv4()}
                         variant="secondary"
                      >

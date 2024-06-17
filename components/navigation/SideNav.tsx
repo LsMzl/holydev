@@ -76,7 +76,7 @@ const SideNav = ({
    return (
       <aside
          className={cn(
-            "hidden lg:block py-2 sticky top-0 left-0 h-screen pt-24 ml-2"
+            "hidden lg:block py-2 static top-0 left-0 h-screen pt-16 ml-2"
          )}
       >
          {/* User infos */}

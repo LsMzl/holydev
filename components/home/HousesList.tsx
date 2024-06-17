@@ -1,5 +1,5 @@
 "use client";
-import { Category, House, User } from "@prisma/client";
+import { Category, House, HouseType, User } from "@prisma/client";
 import { v4 as uuidv4 } from "uuid";
 import HouseCard from "../elements/cards/HouseCard";
 import Container from "../elements/Container";
@@ -14,10 +14,12 @@ const HousesList = ({
    houses,
    user,
    categories,
+   houseTypes,
 }: {
    houses: House[];
    user?: User | null;
    categories: Category[];
+   houseTypes: HouseType[];
 }) => {
    const router = useRouter();
 
@@ -37,7 +39,7 @@ const HousesList = ({
             </div>
          </div>
          {/* Categories Filter */}
-         <CategoriesCarousel category={categories} />
+         <CategoriesCarousel category={categories} houseTypes={houseTypes} />
          <div className="flex items-center justify-between mt-5">
             <div className="text-sm flex items-center gap-5 font-medium">
                <p>Autour de moi</p>

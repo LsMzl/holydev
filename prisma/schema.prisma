@@ -97,21 +97,25 @@ model House {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
   // Informations
-  title       String?  @db.Text
-  image       String
+  title       String  @db.Text
+  image       String? @db.LongText
   introduction String?
-  description String?  @db.LongText
+  description String  @db.LongText
   // Propriétaire
   ownerId     String
-  price       Int
+  price       Int?
   // Features
-  bedroom    Int
-  kitchen    Int
-  bathroom   Int
+  bedroom    Int?
+  kitchen    Int?
+  bathroom   Int?
+  // Disponibilité
+  isAvailable Boolean @default(true)
 
   // Relations
   //! Many to Many catégories
   categories CategoriesOnHouses[]
+  //! Many to Many types
+  types TypesOnHouses[]
   //! Many to Many équipements
   features FeaturesOnHouses[]
   // Avis client
@@ -151,6 +155,17 @@ model Category {
   updatedAt DateTime             @default(now())
   // Maisons
   houses    CategoriesOnHouses[]
+}
+
+model HouseType {
+  id        String               @id @default(uuid())
+  name      String
+  image     String?
+  // Création, modification
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @default(now())
+  // Maisons
+  houses    TypesOnHouses[]
 }
 
 //* Equipements de maisons (wifi, parking, etc...)
@@ -258,6 +273,16 @@ model CategoriesOnHouses {
   categoryId String
 
   @@id([houseId, categoryId])
+}
+
+//! Many to many entre types et maisons
+model TypesOnHouses {
+  house      House    @relation(fields: [houseId], references: [id])
+  houseId    String
+  houseType   HouseType @relation(fields: [houseTypeId], references: [id])
+  houseTypeId String
+
+  @@id([houseId, houseTypeId])
 }
 
 //! Many to many entre équipements et maisons

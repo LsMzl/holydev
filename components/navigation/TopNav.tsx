@@ -87,24 +87,21 @@ const TopNav = ({
                   </Button>
                )}
 
-               <div className="relative">
-                  <Bell size={20} />
-                  <span className="absolute h-4 w-4 rounded-full bg-red-500 -top-1 -right-1"></span>
-               </div>
-
                {userId && (
                   <Button
                      className="hidden md:flex items-center gap-1 shadow "
                      onClick={() => router.push("/ajouter")}
                   >
                      <Plus size={15} />
-                     Créer une annonce
+                     Annonce
                   </Button>
                )}
-               <div className="relative hidden">
-                  <Bell />
+
+               <div className="relative">
+                  <Bell size={20} />
                   <span className="absolute h-4 w-4 rounded-full bg-red-500 -top-1 -right-1"></span>
                </div>
+
                {userId ? (
                   <UserMenu
                      userMail={userMail}

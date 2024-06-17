@@ -9,7 +9,7 @@ import { OnboardingStepsListInterface } from "@/types/houseOnboardingTypes";
 import OnboardingView from "./HouseOnboarding.view";
 import FirstStep from "./steps/FirstStep";
 import LastStep from "./steps/LastStep";
-import { Category, Feature } from "@prisma/client";
+import { Category, Feature, HouseType } from "@prisma/client";
 
 interface HouseOnboardingProps {
    house: {
@@ -24,10 +24,11 @@ interface HouseOnboardingProps {
    };
    categories: Category[];
    equipements: Feature[];
+   types: HouseType[];
 }
 
 
-const HouseOnboardingContainer = ({house, categories, equipements}: HouseOnboardingProps) => {
+const HouseOnboardingContainer = ({house, categories, equipements, types}: HouseOnboardingProps) => {
    /** --ETAPES DE L'ONBOARDING-- **/
 
    const [currentStep, setCurrentStep] = useState<number>(1);
@@ -80,6 +81,7 @@ const HouseOnboardingContainer = ({house, categories, equipements}: HouseOnboard
          house={house}
          categories={categories}
          equipements={equipements}
+         types={types}
       />
    );
 };

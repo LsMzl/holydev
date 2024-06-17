@@ -26,7 +26,7 @@ import {
    SelectTrigger,
    SelectValue,
 } from "@/components/ui/select";
-import HouseOnboardingNav from "../HouseOnboardingNavigation";
+
 import { ComponentsProps } from "@/types/houseOnboardingTypes";
 import Image from "next/image";
 import House from "@/public/img/house.jpg";
@@ -34,7 +34,11 @@ import Glasses from "@/public/img/lunettes.jpg";
 import Palmier from "@/public/img/palmier.jpg";
 import Van from "@/public/img/van.jpg";
 
-import Logo from "@/public/logo/logo.png";
+import axios from "axios";
+import { toast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Loader2, Pen } from "lucide-react";
 
 const formSchema = z.object({
    title: z.string().min(3, {
@@ -58,34 +62,24 @@ const formSchema = z.object({
    }),
 });
 
-const FirstStep = ({
-   next,
-   previous,
-   isFirstStep,
-   isFinalStep,
-   stepsList,
-   getCurrentStep,
-   house,
-   categories,
-   equipements,
-}: ComponentsProps) => {
+const FirstStep = ({ house }: ComponentsProps) => {
    const [states, setStates] = useState<IState[]>([]);
    const [cities, setCities] = useState<ICity[]>([]);
    const { getAllCountries, getCountryStates, getStateCities } = useLocation();
-
+   const router = useRouter();
    const countries = getAllCountries();
    const [isLoading, setIsLoading] = useState(false);
 
    const form = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
       defaultValues: {
-         title: house?.title || "",
-         introduction: house.intro || "",
-         description: house?.description || "",
-         country: house?.country || "",
-         state: house?.state || "",
-         city: house?.city || "",
-         address: house?.address || "",
+         title: house?.title,
+         introduction: house?.introduction || "",
+         description: house?.description,
+         country: house?.country,
+         state: house?.state,
+         city: house?.city,
+         address: house?.address,
       },
    });
 
@@ -110,9 +104,28 @@ const FirstStep = ({
       }
    }, [form.watch("country"), form.watch("state")]);
 
+   /**
+    * Stockage des données du formulaire dans le localStorage.
+    * @param values Array - Donénes du formulaire.
+    */
    function onSubmit(values: z.infer<typeof formSchema>) {
-      console.log("firstStep", values);
-      next();
+      setIsLoading(true);
+      localStorage.setItem("house", JSON.stringify(values));
+      axios
+         .post("/api/house", values)
+         .then((res) => {
+            setIsLoading(false);
+            router.push(`/ajouter/${res.data.id}`);
+         })
+         .catch((error) => {
+            console.log(error);
+            toast({
+               variant: "destructive",
+               description:
+                  "Une erreur est survenue veuillez réessayer plus tard.",
+            });
+            setIsLoading(false);
+         });
    }
 
    return (
@@ -177,7 +190,10 @@ const FirstStep = ({
          {/* Right section */}
          <div className="flex-1 flex flex-col gap-3 items-center justify-center ">
             <Form {...form}>
-               <form className="w-full px-10">
+               <form
+                  className="w-full px-10"
+                  onSubmit={form.handleSubmit(onSubmit)}
+               >
                   <div className="mb-5">
                      <p className="font-semibold">Informations de base</p>
                      {/* Title */}
@@ -428,11 +444,20 @@ const FirstStep = ({
                         />
                      </div>
                   </div>
-                  <HouseOnboardingNav
-                     next={form.handleSubmit(onSubmit)}
-                     isFirstStep={isFirstStep}
-                     isFinalStep={isFinalStep}
-                  />
+                  <div className="flex justify-end">
+                     <Button disabled={isLoading} className="w-[150px]">
+                        {isLoading ? (
+                           // Pendant le chargement
+                           <>
+                              <Loader2 className="mr-2 h-4 w-4" />
+                              En cours
+                           </>
+                        ) : (
+                           // Sans chargement
+                           <>Suivant</>
+                        )}
+                     </Button>
+                  </div>
                </form>
             </Form>
          </div>

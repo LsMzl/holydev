@@ -9,7 +9,8 @@ const HouseOnboardingView = ({
    stepsList,
    house,
    categories,
-   equipements
+   equipements,
+   types
 }: ComponentsProps) => {
    //? Si un composant correspond à l'étape en cours, affichage du composant
    if (getCurrentStep()?.component) {
@@ -28,6 +29,7 @@ const HouseOnboardingView = ({
                   house={house}
                   categories={categories}
                   equipements={equipements}
+                  types={types}
                />
             )}
          </div>
