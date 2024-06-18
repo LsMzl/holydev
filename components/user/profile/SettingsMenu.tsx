@@ -37,7 +37,7 @@ interface SettingsMenuProps {
    address: string;
    email: string;
    phone: string;
-   password: string;
+
 }
 
 const SettingsMenu = ({
@@ -49,7 +49,7 @@ const SettingsMenu = ({
    address,
    email,
    phone,
-   password,
+
 }: SettingsMenuProps) => {
    return (
       <Sheet>
@@ -101,7 +101,7 @@ const SettingsMenu = ({
                      address={address}
                      email={email}
                      phone={phone}
-                     password={password}
+
                   />
                </div>
                {/* Suppression du compte */}

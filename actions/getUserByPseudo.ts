@@ -12,6 +12,9 @@ export const getUserByPseudo = async (userPseudo: string) => {
          where: {
             pseudo: userPseudo,
          },
+         include: {
+            houses: true,
+         }
       });
 
       //! No user found

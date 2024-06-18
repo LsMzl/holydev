@@ -12,8 +12,6 @@ import { Calendar, LucideIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { useUser } from "@clerk/nextjs";
-import LeafletMap from "../house/LeafletMap";
-import Map from "@/public/img/map.jpg";
 import MiniMap from "../user/MiniMap";
 
 interface SideNavProps {

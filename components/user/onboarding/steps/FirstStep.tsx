@@ -38,23 +38,18 @@ const formSchema = z.object({
    phone: z.string().min(10, {
       message: "Votre numéro de téléphone n'est pas valide",
    }),
-   password: z.string().min(8, {
-      message: "Votre mot de passe doit contenir au moins 8 caractères",
-   }),
 });
 
-const FirstStep = (
-   {
-      next,
-      previous,
-      isFirstStep,
-      isFinalStep,
-      stepsList,
-      getCurrentStep,
-      user,
-      dbUser
-   }: ComponentsProps,
-) => {
+const FirstStep = ({
+   next,
+   previous,
+   isFirstStep,
+   isFinalStep,
+   stepsList,
+   getCurrentStep,
+   user,
+   dbUser,
+}: ComponentsProps) => {
    const [isLoading, setIsLoading] = useState(false);
 
    const form = useForm<z.infer<typeof formSchema>>({
@@ -64,12 +59,11 @@ const FirstStep = (
          lastName: dbUser?.lastName || "",
          pseudo: dbUser?.pseudo || "",
          email: user?.email || "",
-         password: dbUser?.password || "",
       },
    });
 
    function onSubmit(values: z.infer<typeof formSchema>) {
-      console.log('onSubmit', values);
+      console.log("onSubmit", values);
       setIsLoading(true);
       axios
          .post("/api/user/onboarding", values)
@@ -204,31 +198,6 @@ const FirstStep = (
                         )}
                      />
                   </div>
-                  {/* Password */}
-                  <FormField
-                     control={form.control}
-                     name="password"
-                     render={({ field }) => (
-                        <FormItem>
-                           <FormLabel>
-                              Mot de passe{" "}
-                              <span className="text-red-500">*</span>
-                           </FormLabel>
-                           <FormDescription>
-                              Doit contenir au moins 8 caractères
-                           </FormDescription>
-                           <FormControl>
-                              <PasswordInput
-                                 placeholder="Mot de passe"
-                                 {...field}
-                                 type="password"
-                              />
-                           </FormControl>
-
-                           <FormMessage />
-                        </FormItem>
-                     )}
-                  />
                   <OnboardingNav
                      next={form.handleSubmit(onSubmit)}
                      previous={previous}

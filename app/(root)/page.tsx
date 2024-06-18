@@ -9,6 +9,7 @@ import LastHousesCarousel from "@/components/home/LastHousesCarousel";
 import { getLastHouses } from "@/queries/getLastHouses";
 import Spacing from "@/components/elements/Spacing";
 import { getAllHouseTypes } from "@/queries/getAllHouseTypes";
+import PostCard from "@/components/posts/PostCard";
 
 interface HousesProps {
    searchParams: {
@@ -32,7 +33,7 @@ export default async function Home({ searchParams }: HousesProps) {
 
    if (!houses) return <div>Aucune annonce trouvée</div>;
    return (
-      <div className="flex w-full min-h-screen mt-14">
+      <div className="flex w-full min-h-screen">
          <div className="lg:w-[20%] 2xl:w-[15%]">
             <SideNav
                userMail={connectedUser?.email}

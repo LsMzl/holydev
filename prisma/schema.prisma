@@ -35,7 +35,6 @@ model User {
   languages        String?
   // Identifiants
   email            String   @unique
-  password         String
   // Création, modification
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
@@ -58,9 +57,26 @@ model User {
   comments Comment[]
   //! Un utilisateur peut avoir 0 ou plusieurs favoris
   favourites Favourite[]
+  //! Un utilisateur peut mettre 0 ou plusieurs notes
+  rates Rates[]
 
   // Sessions          Session[]
   // VerificationToken VerificationToken[]
+}
+
+//* Notes sur les maisons
+model Rates {
+  id       String @id @default(uuid())
+  rate  Int
+  //! Une note n'a qu'un seul auteur
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String
+  //! Une note ne concerne qu'une seule maison
+  house    House  @relation(fields: [houseId], references: [id], onDelete: Cascade)
+  houseId  String
+  // Création, modification
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }
 
 //* Avis clients sur les maisons
@@ -134,6 +150,8 @@ model House {
   userId         String?
   //! Une maison peut être dans 0 ou plusieurs favoris
   favourites Favourite[]
+  //! Une maison peut avoir 0 ou plusieurs notes
+  rates Rates[]
   
 
   @@index([ownerId])
@@ -216,6 +234,7 @@ model Post {
   id              String   @id @default(uuid())
   content String?  @db.Text
   image String?
+  createdAt DateTime             @default(now())
   //! Un post n'a qu'un seul auteur
   author   User   @relation(fields: [authorId], references: [id])
   authorId String
@@ -254,10 +273,6 @@ model Like {
   author   User   @relation(fields: [authorId], references: [id])
   authorId String
 }
-
-
-
-
 
 
 //! Many to many entre groupes et users

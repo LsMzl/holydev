@@ -34,7 +34,7 @@ export default async function RootLayout({
 
    return (
       <ClerkProvider>
-         <html lang="fr" suppressHydrationWarning>
+         <html lang="fr">
             <body className={cn("w-full min-h-screen", inter.className)}>
                <ThemeProvider
                   attribute="class"

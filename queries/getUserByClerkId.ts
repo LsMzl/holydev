@@ -12,6 +12,9 @@ export const getUserByClerkId = async (userId: string) => {
          where: {
             clerkId: userId,
          },
+         include:{
+            houses: true
+         }
       });
 
       //! No user found

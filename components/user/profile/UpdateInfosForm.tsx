@@ -34,7 +34,6 @@ import { useForm } from "react-hook-form";
 
 import * as z from "zod";
 import { Separator } from "@/components/ui/separator";
-import { PasswordInput } from "@/components/ui/passwordInput";
 import {
    Select,
    SelectContent,
@@ -54,7 +53,6 @@ interface UpdateUserProps {
    address: string;
    email: string;
    phone: string;
-   password: string;
 }
 
 const formSchema = z.object({
@@ -75,8 +73,6 @@ const formSchema = z.object({
    // Informations de connexion
    email: z.string().optional(),
    phone: z.string().optional(),
-   // currentPassword: z.string().optional(),
-   password: z.string().optional(),
 });
 
 const UpdateInfosForm = ({
@@ -88,7 +84,6 @@ const UpdateInfosForm = ({
    address,
    email,
    phone,
-   password,
 }: UpdateUserProps) => {
    const { toast } = useToast();
    const router = useRouter();
@@ -113,31 +108,29 @@ const UpdateInfosForm = ({
          address: address ?? "",
          email: email ?? "",
          phone: phone ?? "",
-         password: password ?? "",
       },
    });
 
-/** Récupération des états d'un pays lors d'un changement dans le formulaire */
-useEffect(() => {
-   const selectedCountry = form.watch("country") ?? "";
-   // Récupération des états du pays selectionné
-   const countryStates = getCountryStates(selectedCountry);
-   if (countryStates) {
-      setStates(countryStates);
-   }
-}, [form.watch("country")]);
+   /** Récupération des états d'un pays lors d'un changement dans le formulaire */
+   useEffect(() => {
+      const selectedCountry = form.watch("country") ?? "";
+      // Récupération des états du pays selectionné
+      const countryStates = getCountryStates(selectedCountry);
+      if (countryStates) {
+         setStates(countryStates);
+      }
+   }, [form.watch("country")]);
 
-/** Récupération des états d'un pays lors d'un changement dans le formulaire */
-useEffect(() => {
-   const selectedCountry = form.watch("country") ?? "";
-   const selectedState = form.watch("state");
-   // Récupération des villes de l'état selectionné
-   const stateCities = getStateCities(selectedCountry, selectedState);
-   if (stateCities) {
-      setCities(stateCities);
-   }
-}, [form.watch("country"), form.watch("state")]);
-
+   /** Récupération des états d'un pays lors d'un changement dans le formulaire */
+   useEffect(() => {
+      const selectedCountry = form.watch("country") ?? "";
+      const selectedState = form.watch("state");
+      // Récupération des villes de l'état selectionné
+      const stateCities = getStateCities(selectedCountry, selectedState);
+      if (stateCities) {
+         setCities(stateCities);
+      }
+   }, [form.watch("country"), form.watch("state")]);
 
    const onSubmit = async (values: z.infer<typeof formSchema>) => {
       setIsLoading(true);
@@ -472,32 +465,6 @@ useEffect(() => {
                                  )}
                               />
                            </div> */}
-                           <div>
-                              <FormField
-                                 control={form.control}
-                                 name="password"
-                                 render={({ field }) => (
-                                    <FormItem>
-                                       <FormLabel className="text-xs">
-                                          Nouveau mot de passe{" "}
-                                          <span className="text-red-500">
-                                             *
-                                          </span>
-                                       </FormLabel>
-
-                                       <FormControl>
-                                          <PasswordInput
-                                             placeholder="Mot de passe"
-                                             {...field}
-                                             type="password"
-                                          />
-                                       </FormControl>
-
-                                       <FormMessage />
-                                    </FormItem>
-                                 )}
-                              />
-                           </div>
                         </div>
                      </div>
                   </div>

@@ -4,7 +4,7 @@ import type {NextRequest} from "next/server";
 
 const isProtectedRoutes = createRouteMatcher([
   // "/api(.*)",
-  "/book-house",
+  // "/book-house",
   // "/dashboard",
 ]);
 

@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
 import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { Bell, Pen, Plus, Search } from "lucide-react";
+import { Button, buttonVariants } from "../ui/button";
+import { Bell, Home, LayoutGrid, Pen, Plus, Search, Users } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
 import { UserMenu } from "./UserMenu";
 import { GuestMenu } from "./GuestMenu";
@@ -12,6 +12,7 @@ import Image from "next/image";
 import Logo from "@/public/logo/logo.png";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import Spacing from "../elements/Spacing";
+import { cn } from "@/lib/utils";
 
 interface UserMenuProps {
    userMail: string;
@@ -31,23 +32,29 @@ const TopNav = ({
    const { userId } = useAuth();
    const router = useRouter();
    return (
-      <nav className="flex items-center justify-between py-1 px-2 lg:px-5 2xl:pr-7 fixed w-full top-0 left-0 z-50 bg-background/95 shadow">
-         <Link href="/" className="text-md" title="Retour à la page d'accueil">
-            <div className="flex items-center gap-2 ">
-               <Image
-                  src={Logo}
-                  width={60}
-                  height={60}
-                  alt="Logo de Holydevs représentant des maisons de vacances sous des palmiers."
-                  className="hidden sm:block"
-               />
-               <p className="hidden lg:block text-red-500 uppercase font-semibold text-lg">
-                  Holydevs
-               </p>
-            </div>
-         </Link>
+      <nav className="flex items-center justify-between py-1 fixed w-full top-0 left-0 z-50 bg-background/10 shadow 2xl:relative">
+         <div className="lg:w-[20%] 2xl:w-[15%] flex items-center justify-center">
+            <Link
+               href="/"
+               className="text-md "
+               title="Retour à la page d'accueil"
+            >
+               <div className="flex items-center gap-2">
+                  <Image
+                     src={Logo}
+                     width={40}
+                     height={40}
+                     alt="Logo de Holydevs représentant des maisons de vacances sous des palmiers."
+                     className="hidden sm:block"
+                  />
+                  <p className="hidden lg:block text-red-500 uppercase font-semibold text-lg">
+                     Holydevs
+                  </p>
+               </div>
+            </Link>
+         </div>
 
-         <div className="flex justify-between items-center w-[1515px] gap-5">
+         <div className="flex justify-between items-center gap-5 w-[100%] lg:w-[80%] 2xl:w-[85%] pr-2">
             <div className="flex items-center gap-2">
                <Link href="/" title="Retour à la page d'accueil">
                   <Image
@@ -72,10 +79,37 @@ const TopNav = ({
                      </PopoverContent>
                   </Popover>
                </div>
+               {/* Onglets */}
+               <div className="flex items-center">
+                  <Link
+                     href="/"
+                     className="hover:bg-secondary py-3 px-8 rounded"
+                     title="Accueil"
+                  >
+                     <Home />
+                  </Link>
+                  <Link
+                     href="/utilisateurs"
+                     className="hover:bg-secondary py-3 px-8 rounded"
+                     title="Utilisateurs"
+                  >
+                     <Users />
+                  </Link>
+                  <Link
+                     href="/social"
+                     className="hover:bg-secondary py-3 px-8 rounded"
+                     title="Social"
+                  >
+                     <LayoutGrid />
+                  </Link>
+               </div>
                {/* Tablet */}
+               <label htmlFor="searchBar" />
                <Input
-                  className="hidden sm:block md:w-[300px] ml-4"
+                  className="hidden sm:block md:w-[300px] md:absolute md:left-[50%] md:translate-x-[-50%] 2xl:w-[500px]"
                   placeholder="Recherchez une annonce, ville, catégorie..."
+                  name="searchBar"
+                  id="searchBar"
                />
             </div>
 
@@ -86,18 +120,21 @@ const TopNav = ({
                      <Pen size={15} />
                   </Button>
                )}
-
+               {/* Screen */}
                {userId && (
-                  <Button
-                     className="hidden md:flex items-center gap-1 shadow "
-                     onClick={() => router.push("/ajouter")}
+                  <Link
+                     href="/ajouter"
+                     className={cn(
+                        buttonVariants(),
+                        "hidden md:flex items-center gap-1 shadow "
+                     )}
                   >
                      <Plus size={15} />
                      Annonce
-                  </Button>
+                  </Link>
                )}
 
-               <div className="relative">
+               <div className="relative md:ml-5">
                   <Bell size={20} />
                   <span className="absolute h-4 w-4 rounded-full bg-red-500 -top-1 -right-1"></span>
                </div>

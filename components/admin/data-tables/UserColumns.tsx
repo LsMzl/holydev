@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
+import Image from "next/image";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -25,12 +26,14 @@ export const columns: ColumnDef<User>[] = [
       cell: ({ row }) => {
          return (
             <div className="flex gap-2 items-center">
-               <img
+               <Image
                   src={`https://api.dicebear.com/8.x/fun-emoji/svg?seed=${row.getValue(
                      "name"
                   )}`}
                   alt={`Photo de ${row.getValue("name")}`}
                   className="rounded-full h-8 w-8"
+                  width={8}
+                  height={8}
                />
                <p>{row.getValue("name")}</p>
             </div>

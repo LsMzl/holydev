@@ -14,6 +14,7 @@ import SettingsMenu from "@/components/user/profile/SettingsMenu";
 import UpdateProfileForm from "@/components/user/profile/UpdateProfileForm";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import AddPostForm from "@/components/posts/AddPostForm";
 
 interface ProfilPageProps {
    params: {
@@ -23,12 +24,20 @@ interface ProfilPageProps {
 }
 const MyProfile = async ({ params, userId }: ProfilPageProps) => {
    const user = await getUserByClerkId(params.userId);
+   console.log("user", user?.houses.length);
+   if (!user) return null;
+
+   const userData = {
+      id: user.id ?? "",
+      firstName: user.firstName ?? "",
+      profilePicture: user.profilePicture ?? "",
+   };
 
    return (
       <div className="">
          <div className="bg-gradient-to-b from-gray-500 to-background ">
             {/* Haut */}
-            <div className="max-w-[1400px] m-auto pt-[65px]">
+            <div className="max-w-[1400px] m-auto">
                {/* Cover picture & informations */}
                <section>
                   {/* Cover picture */}
@@ -102,7 +111,6 @@ const MyProfile = async ({ params, userId }: ProfilPageProps) => {
                            address={user?.address ?? ""}
                            email={user?.email ?? ""}
                            phone={user?.phone ?? ""}
-                           password={user?.password ?? ""}
                         />
                      </div>
                   </div>
@@ -134,7 +142,6 @@ const MyProfile = async ({ params, userId }: ProfilPageProps) => {
                         address={user?.address ?? ""}
                         email={user?.email ?? ""}
                         phone={user?.phone ?? ""}
-                        password={user?.password ?? ""}
                      />
                   </div>
                   <div className="mb-10 text-sm mx-2 md:mx-10">
@@ -147,6 +154,7 @@ const MyProfile = async ({ params, userId }: ProfilPageProps) => {
          {/* Bas */}
          <Container className="max-w-[1400px]">
             <section className="md:flex gap-5 mb-28 sticky top-0 self-start">
+               {/* Gauche */}
                <aside className="hidden w-[25%] md:flex flex-col gap-5 ">
                   <div className="border flex items-center justify-center text-center rounded m-auto bg-card w-full">
                      <span className="w-28 hover:bg-border/70 py-2 border-r border-border">
@@ -158,8 +166,28 @@ const MyProfile = async ({ params, userId }: ProfilPageProps) => {
                         className="w-28 hover:bg-border/70 py-2 border-r border-border"
                         title="Annonces utilisateur"
                      >
-                        <p className="font-semibold leading-5">3</p>
-                        <p className="text-sm">Annonces</p>
+                        {user?.houses.length === 0 && (
+                           <>
+                              <p className="font-semibold leading-5">0</p>
+                              <p className="text-sm">Annonce</p>
+                           </>
+                        )}
+                        {user?.houses.length === 1 && (
+                           <>
+                              <p className="font-semibold leading-5">
+                                 {user?.houses.length}
+                              </p>
+                              <p className="text-sm">Annonce</p>
+                           </>
+                        )}
+                        {user?.houses.length > 1 && (
+                           <>
+                              <p className="font-semibold leading-5">
+                                 {user?.houses.length}
+                              </p>
+                              <p className="text-sm">Annonces</p>
+                           </>
+                        )}
                      </Link>
                      <span className="w-28 hover:bg-border/70 py-2">
                         <p className="font-semibold leading-5">157</p>
@@ -200,8 +228,9 @@ const MyProfile = async ({ params, userId }: ProfilPageProps) => {
                      <div className="bg-secondary h-96"></div>
                   </div>
                </aside>
+               {/* Droite */}
                <div className="w-[100%] md:w-[75%] flex flex-col gap-5">
-                  <div className="bg-card rounded border h-24">ghdfh</div>
+                  <AddPostForm connectedUser={userData} />
                   {/* Publications */}
                   <div>
                      <p className="text-xl text-medium bg-gradient-to-b from-gray-200 to-background rounded border h-[500px]">
