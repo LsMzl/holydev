@@ -13,7 +13,12 @@ export const getUserByClerkId = async (userId: string) => {
             clerkId: userId,
          },
          include:{
-            houses: true
+            houses: true,
+            opinions: {
+               select: {
+                  id: true,
+               }
+            }
          }
       });
 

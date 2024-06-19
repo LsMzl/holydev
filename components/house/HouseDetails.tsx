@@ -41,14 +41,26 @@ import { Badge } from "../ui/badge";
 import AddOpinionForm from "../forms/addOpinionForm";
 import { Separator } from "../ui/separator";
 import { dataTypes } from "@/types/dataTypes";
+import OpinionsCarousel from "./OpinionsCarousel";
+import { v4 as uuidv4 } from "uuid";
 
 interface HouseDetailsProps {
    house: any;
    bookings?: Booking[];
+   lastOpinions: {
+      title: string;
+      content: string;
+      createdAt: Date;
+      author: {
+         lastName: string;
+         firstName: string;
+         pseudo: string;
+         profilePicture: string;
+      };
+   }[];
 }
 
-const HouseDetails = ({ house, bookings }: HouseDetailsProps) => {
-   console.log(house.Opinions);
+const HouseDetails = ({ house, bookings, lastOpinions }: HouseDetailsProps) => {
    const { getCountryByCode, getStateByCode } = useLocation();
    const country = getCountryByCode(house?.country ?? "");
    const state = getStateByCode(house?.country ?? "", house?.state ?? "");
@@ -340,7 +352,7 @@ const HouseDetails = ({ house, bookings }: HouseDetailsProps) => {
                <div className="w-full ">
                   <ul className="grid grid-cols-3 space-y-1">
                      {house.features.map((feature: any) => (
-                        <li key={feature.id}>
+                        <li key={uuidv4()}>
                            <span>
                               {feature.image && (
                                  <Image
@@ -448,24 +460,11 @@ const HouseDetails = ({ house, bookings }: HouseDetailsProps) => {
                </div>
             </div>
 
-            <div className="flex items-center justify-between gap-8 mt-5 border-b py-5">
-               {house.Opinions.map((opinion: any) => (
-                  <div
-                     className="flex flex-col items-center justify-between"
-                     key={opinion.title}
-                  >
-                     <Avatar>
-                        <AvatarImage
-                           src={opinion.author.profilePicture}
-                           className="rounded-full h-14 w-14"
-                        />
-                     </Avatar>
-                     <p className="text-sm font-medium">{opinion.title}</p>
-                     <p className="text-center max-w-[300px] text-sm">
-                        {opinion.content}
-                     </p>
-                  </div>
-               ))}
+            {/* Carousel avis */}
+            <div>
+               {lastOpinions.length > 0 && (
+                  <OpinionsCarousel lastOpinions={lastOpinions} />
+               )}
             </div>
          </section>
 

@@ -1,12 +1,13 @@
 import { Heart, Repeat, Reply, Share } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { comment } from "postcss";
 import React from "react";
+import { v4 as uuidv4 } from "uuid";
 
 interface PostCardProps {
    id: string;
    currentUserId: string;
+   parentId: string | null;
    content: string | null;
    image: string | null;
    author: {
@@ -35,17 +36,21 @@ interface PostCardProps {
 const PostCard = ({
    id,
    currentUserId,
-   //    parentId
+   parentId,
    content,
    image,
    author,
    createdAt,
    comments,
-   likes,
    isComment,
+   likes,
 }: PostCardProps) => {
    return (
-      <article className="flex w-full flex-col rounded-lg bg-card p-7">
+      <article
+         className={`flex w-full flex-col rounded-lg bg-card ${
+            isComment ? "p-5 ml-10 mb-5" : "bg-card/50 p-7 "
+         }`}
+      >
          <div className="flex items-start justify-between">
             <div className="flex-1 w-full flex gap-4">
                <div className="flex flex-col items-center">
@@ -70,7 +75,10 @@ const PostCard = ({
                         {author.firstName} {author.lastName}
                      </h4>
                   </Link>
-                  <p className="mt-2 text-sm text-gray-700">{content}</p>
+                  <p className="text-xs text-foreground/40">Publié le</p>
+                  <p className="mt-2 text-sm text-foreground/80 font-light">
+                     {content}
+                  </p>
 
                   <div className="mt-5 flex flex-col gap-3">
                      {/* Icons */}
@@ -91,12 +99,24 @@ const PostCard = ({
                      </div>
 
                      {/* Affichage des réponses */}
-                     {isComment && comments.length > 0 && (
-                        <Link href={`/social/post/${id}`}>
-                           <p className="mt-1 font-medium text-gray-400">
-                              {comments.length} réponses
-                           </p>
-                        </Link>
+                     {!isComment && comments.length > 0 && (
+                        <div className="ml-1 mt-3 flex items-center gap-2">
+                           {comments.slice(0, 2).map((comment, index) => (
+                              <Image
+                                 key={uuidv4()}
+                                 src={comment.author.profilePicture ?? ""}
+                                 alt={`Photo de profil de ${comment.author.firstName} ${comment.author.lastName}`}
+                                 width={24}
+                                 height={24}
+                                 className={`${index !== 0 && "-ml-5"} rounded-full object-cover border border-cyan-500`}
+                              />
+                           ))}
+                           <Link href={`/social/post/${id}`}>
+                              <p className="mt-1 text-sm font-medium text-foreground/70">
+                                 {comments.length} réponse{comments.length > 1 && "s"}
+                              </p>
+                           </Link>
+                        </div>
                      )}
                   </div>
                </div>

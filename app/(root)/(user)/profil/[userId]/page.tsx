@@ -14,7 +14,12 @@ import SettingsMenu from "@/components/user/profile/SettingsMenu";
 import UpdateProfileForm from "@/components/user/profile/UpdateProfileForm";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+
+import PostCard from "@/components/posts/PostCard";
+
+import { getPostsByUserId } from "@/actions/getPostsByUserId";
 import AddPostForm from "@/components/posts/AddPostForm";
+
 
 interface ProfilPageProps {
    params: {
@@ -24,8 +29,11 @@ interface ProfilPageProps {
 }
 const MyProfile = async ({ params, userId }: ProfilPageProps) => {
    const user = await getUserByClerkId(params.userId);
-   console.log("user", user?.houses.length);
    if (!user) return null;
+
+   // Récupération des posts
+   const posts = await getPostsByUserId(user.id);
+   if (!posts) return null;
 
    const userData = {
       id: user.id ?? "",
@@ -57,7 +65,7 @@ const MyProfile = async ({ params, userId }: ProfilPageProps) => {
                   <div className="flex justify-between items-start mx-2 md:mx-10 h-16 md:h-20 2xl:h-28 md:border-b md:mb-2">
                      <div className="flex items-end relative -top-10 gap-2 ">
                         {/* Avatar */}
-                        <Avatar className="bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 w-24 h-24 2xl:w-[140px] 2xl:h-[140px] shadow">
+                        <Avatar className="bg-gradient-to-b from-purple-800 via-pink-500 to-indigo-400 w-24 h-24 2xl:w-[140px] 2xl:h-[140px] shadow">
                            <AvatarImage
                               className="object-cover rounded-full w-[88px] h-[88px]  2xl:w-[132px] 2xl:h-[132px] absolute bottom-1 right-1"
                               src={
@@ -144,101 +152,137 @@ const MyProfile = async ({ params, userId }: ProfilPageProps) => {
                         phone={user?.phone ?? ""}
                      />
                   </div>
-                  <div className="mb-10 text-sm mx-2 md:mx-10">
-                     guofehgodisjg
+                  <div className="mb-7 text-sm mx-2 md:mx-10 flex items-center gap-3 font-medium">
+                     <p>Publications</p>
+                     <p>Abonnements</p>
+                     <p>Lorem ipsum</p>
                   </div>
                </section>
             </div>
          </div>
 
          {/* Bas */}
-         <Container className="max-w-[1400px]">
-            <section className="md:flex gap-5 mb-28 sticky top-0 self-start">
-               {/* Gauche */}
-               <aside className="hidden w-[25%] md:flex flex-col gap-5 ">
-                  <div className="border flex items-center justify-center text-center rounded m-auto bg-card w-full">
-                     <span className="w-28 hover:bg-border/70 py-2 border-r border-border">
-                        <p className="font-semibold leading-5">50</p>
-                        <p className="text-sm">Relations</p>
-                     </span>
-                     <Link
-                        href="/mes-annonces"
-                        className="w-28 hover:bg-border/70 py-2 border-r border-border"
-                        title="Annonces utilisateur"
-                     >
-                        {user?.houses.length === 0 && (
+         <Container className="max-w-[1400px] flex items-start gap-10">
+            {/* Gauche */}
+            <aside className="hidden w-[25%] md:flex flex-col gap-5 ">
+               <div className="flex items-center justify-center text-center rounded m-auto bg-card/50 w-full">
+                  <span className="w-28 hover:bg-border/70 py-2 border-r border-border">
+                     <p className="font-semibold leading-5">50</p>
+                     <p className="text-sm">Relations</p>
+                  </span>
+                  <Link
+                     href="/mes-annonces"
+                     className="w-28 hover:bg-border/70 py-2 border-r border-border"
+                     title="Annonces utilisateur"
+                  >
+                     {user?.houses.length === 0 && (
+                        <>
+                           <p className="font-semibold leading-5">0</p>
+                           <p className="text-sm">Annonce</p>
+                        </>
+                     )}
+                     {user?.houses.length === 1 && (
+                        <>
+                           <p className="font-semibold leading-5">
+                              {user?.houses.length}
+                           </p>
+                           <p className="text-sm">Annonce</p>
+                        </>
+                     )}
+                     {user?.houses.length > 1 && (
+                        <>
+                           <p className="font-semibold leading-5">
+                              {user?.houses.length}
+                           </p>
+                           <p className="text-sm">Annonces</p>
+                        </>
+                     )}
+                  </Link>
+                  <span className="w-28 hover:bg-border/70 py-2">
+                     <div>
+                        {user?.opinions.length === 0 && (
                            <>
                               <p className="font-semibold leading-5">0</p>
-                              <p className="text-sm">Annonce</p>
+                              <p className="text-sm">Avis</p>
                            </>
                         )}
-                        {user?.houses.length === 1 && (
+                        {user?.houses.length > 0 && (
                            <>
                               <p className="font-semibold leading-5">
-                                 {user?.houses.length}
+                                 {user?.opinions.length}
                               </p>
-                              <p className="text-sm">Annonce</p>
+                              <p className="text-sm">Avis</p>
                            </>
                         )}
-                        {user?.houses.length > 1 && (
-                           <>
-                              <p className="font-semibold leading-5">
-                                 {user?.houses.length}
-                              </p>
-                              <p className="text-sm">Annonces</p>
-                           </>
-                        )}
-                     </Link>
-                     <span className="w-28 hover:bg-border/70 py-2">
-                        <p className="font-semibold leading-5">157</p>
-                        <p className="text-sm">Avis</p>
-                     </span>
-                  </div>
-                  <div className="border rounded-lg shadow-sm bg-card w-full p-3 flex flex-col gap-3">
-                     {/* Biographie */}
-                     <div>
-                        <p className="font-semibold mb-2">Biographie</p>
-                        {/* //TODO: Bio ou bouton ajouter biographie */}
-                        <p className="text-sm leading-4">
-                           {user?.biography ? (
-                              user?.biography
-                           ) : (
-                              <BiographyPopUpForm />
-                           )}
-                        </p>
                      </div>
-                     {/* Centres d'intêrets */}
-                     <div>
-                        <p className="font-semibold mb-2">Centres d'intêrets</p>
-                        <p className="text-sm">{user?.interests}</p>
-                     </div>
-                     {/* Langues parlées */}
-                     <div>
-                        <p className="font-semibold mb-2">Langues parlées</p>
-                        <p className="text-sm">{user?.languages}</p>
-                     </div>
-                  </div>
-
-                  {/* Connexions */}
-                  <div className="border rounded-lg shadow-sm bg-card p-3">
-                     <div className="flex items-center justify-between mb-2">
-                        <p className="font-semibold">Mes connexions</p>
-                        <p className="text-sm text-cyan-500">Voir tout</p>
-                     </div>
-                     <div className="bg-secondary h-96"></div>
-                  </div>
-               </aside>
-               {/* Droite */}
-               <div className="w-[100%] md:w-[75%] flex flex-col gap-5">
-                  <AddPostForm connectedUser={userData} />
-                  {/* Publications */}
+                  </span>
+               </div>
+               <div className="rounded-lg shadow-sm bg-card/50 w-full p-3 flex flex-col gap-3">
+                  {/* Biographie */}
                   <div>
-                     <p className="text-xl text-medium bg-gradient-to-b from-gray-200 to-background rounded border h-[500px]">
-                        Publications
+                     <p className="font-semibold mb-2">Biographie</p>
+                     {/* //TODO: Bio ou bouton ajouter biographie */}
+                     <p className="text-sm leading-4">
+                        {user?.biography ? (
+                           user?.biography
+                        ) : (
+                           <BiographyPopUpForm />
+                        )}
                      </p>
                   </div>
+                  {/* Centres d'intêrets */}
+                  <div>
+                     <p className="font-semibold mb-2">Centres d'intêrets</p>
+                     <p className="text-sm">{user?.interests}</p>
+                  </div>
+                  {/* Langues parlées */}
+                  <div>
+                     <p className="font-semibold mb-2">Langues parlées</p>
+                     <p className="text-sm">{user?.languages}</p>
+                  </div>
                </div>
-            </section>
+
+               {/* Connexions */}
+               <div className="rounded-lg shadow-sm bg-card/50 p-3">
+                  <div className="flex items-center justify-between mb-2">
+                     <p className="font-semibold">Mes connexions</p>
+                     <p className="text-sm text-cyan-500">Voir tout</p>
+                  </div>
+                  <div className="bg-secondary h-96"></div>
+               </div>
+            </aside>
+            {/* Droite */}
+            <div className="w-[100%] md:w-[75%] flex flex-col gap-5">
+               <AddPostForm connectedUser={userData} />
+               {/* Publications */}
+               <section className="rounded bg-card/50 p-5">
+                  <p className="text-2xl font-medium mb-5">Publications</p>
+                  {posts.length === 0 ? (
+                     <p>Aucun post à afficher pour le moment...</p>
+                  ) : (
+                     <div className="flex flex-col gap-5">
+                        {posts.map((post) => (
+                           <>
+                           <p>Id du post: {post.id}</p>
+                           <PostCard
+                              key={post.id}
+                              id={post.id}
+                              currentUserId={user?.id ?? ""}
+                              parentId={post.parentId}
+                              content={post.content}
+                              image={post.image}
+                              author={post.author}
+                              createdAt={post.createdAt}
+                              comments={post.children}
+                              likes={post.likes}
+                           />
+                           
+                           </>
+                        ))}
+                     </div>
+                  )}
+               </section>
+            </div>
          </Container>
       </div>
    );

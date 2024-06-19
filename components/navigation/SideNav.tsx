@@ -118,7 +118,7 @@ const SideNav = ({
             </div>
          </section>
 
-         <section className="rounded p-3 bg-card shadow  overflow-scroll">
+         <section className="rounded p-3 bg-card/30 shadow  overflow-scroll">
             {/* Links */}
             <div className="flex flex-col gap-1">
                {sideNavLinks.map((link, index) => (

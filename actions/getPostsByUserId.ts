@@ -1,21 +1,16 @@
 import { db } from "../lib/db";
 
-export const getPostById = async (postId: string) => {
+export const getPostsByUserId = async (userId: string) => {
    try {
-      const post = await db.post.findUnique({
+      const posts = await db.post.findMany({
          where: {
-            id: postId,
+            authorId: userId,
+         },
+         orderBy: {
+            createdAt: "desc",
          },
          include: {
-            author: {
-               select: {
-                  id: true,
-                  firstName: true,
-                  lastName: true,
-                  pseudo: true,
-                  profilePicture: true,
-               },
-            },
+            author: true,
             children: {
                include: {
                   author: {
@@ -29,21 +24,16 @@ export const getPostById = async (postId: string) => {
                   },
                },
             },
-            likes: 
-            {
-               select: {
-                  id: true,
-               }
-            }
-         }
+            likes: true,
+         },
       });
 
       //! No house found
-      if (!post) {
+      if (!posts) {
          return null;
       }
 
-      return post;
+      return posts;
    } catch (error: any) {
       throw new Error(error);
    }

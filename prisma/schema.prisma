@@ -232,14 +232,19 @@ model Booking {
 //* Publications
 model Post {
   id              String   @id @default(uuid())
-  content String?  @db.Text
+  content String  @db.Text
   image String?
   createdAt DateTime             @default(now())
   //! Un post n'a qu'un seul auteur
   author   User   @relation(fields: [authorId], references: [id])
   authorId String
-  //! Un post peut avoir 0 et plusieurs commentaires
-  comments Comment[]
+
+  parent Post? @relation("PostParent", fields: [parentId], references: [id])
+  children Post[] @relation("PostParent")
+  parentId String?
+
+
+
   //! Un post peut avoir 0 et plusieurs likes
   likes Like[]
 }
@@ -247,17 +252,15 @@ model Post {
 //* Commentaires sur les posts
 model Comment {
   id              String   @id @default(uuid())
-  content String?  @db.Text
+  content String  @db.Text
+  createdAt DateTime             @default(now())
+
   //! Un commentaire n'a qu'un seul auteur
   author   User   @relation(fields: [authorId], references: [id])
   authorId String
-  //! Un commentaire n'a qu'un seul post
-  post   Post   @relation(fields: [postId], references: [id])
-  postId String
+
   //! Un commentaire peut avoir 0 et plusieurs likes
   likes Like[]
-  //! Un commentaire peut avoir 0 et plusieurs commentaires
-
 }
 
 //* Likes sur les posts

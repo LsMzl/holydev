@@ -15,6 +15,8 @@ import UpdateProfileForm from "@/components/user/profile/UpdateProfileForm";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { getUserByPseudo } from "@/actions/getUserByPseudo";
+import { getPostsByUserId } from "@/actions/getPostsByUserId";
+import PostCard from "@/components/posts/PostCard";
 
 interface ProfilPageProps {
    params: {
@@ -25,6 +27,10 @@ interface ProfilPageProps {
 const UserProfile = async ({ params }: ProfilPageProps) => {
    const user = await getUserByPseudo(params.userPseudo);
    if (!user) return null;
+
+   // Récupération des posts
+   const posts = await getPostsByUserId(user.id);
+   if (!posts) return null;
 
    return (
       <div className="">
@@ -135,108 +141,140 @@ const UserProfile = async ({ params }: ProfilPageProps) => {
          </div>
 
          {/* Bas */}
-         <Container className="max-w-[1400px]">
-            <section className="md:flex gap-5 mb-28 sticky top-0 self-start">
-               <aside className="hidden w-[25%] md:flex flex-col gap-5 ">
-                  <div className="border flex items-center justify-center text-center rounded m-auto bg-card w-full">
-                     <span className="w-28 hover:bg-border/70 py-2 border-r border-border">
-                        <p className="font-semibold leading-5">50</p>
-                        <p className="text-sm">Relations</p>
-                     </span>
-                     <Link
-                        href="/mes-annonces"
-                        className="w-28 hover:bg-border/70 py-2 border-r border-border"
-                        title="Annonces utilisateur"
-                     >
-                        {user?.houses.length === 0 && (
+         <Container className="max-w-[1400px] flex items-start gap-10">
+            {/* Gauche */}
+            <aside className="hidden w-[25%] md:flex flex-col gap-5 ">
+               <div className="border flex items-center justify-center text-center rounded m-auto bg-card w-full">
+                  <span className="w-28 hover:bg-border/70 py-2 border-r border-border">
+                     <p className="font-semibold leading-5">50</p>
+                     <p className="text-sm">Relations</p>
+                  </span>
+                  <Link
+                     href="/mes-annonces"
+                     className="w-28 hover:bg-border/70 py-2 border-r border-border"
+                     title="Annonces utilisateur"
+                  >
+                     {user?.houses.length === 0 && (
+                        <>
+                           <p className="font-semibold leading-5">0</p>
+                           <p className="text-sm">Annonce</p>
+                        </>
+                     )}
+                     {user?.houses.length === 1 && (
+                        <>
+                           <p className="font-semibold leading-5">
+                              {user?.houses.length}
+                           </p>
+                           <p className="text-sm">Annonce</p>
+                        </>
+                     )}
+                     {user?.houses.length > 1 && (
+                        <>
+                           <p className="font-semibold leading-5">
+                              {user?.houses.length}
+                           </p>
+                           <p className="text-sm">Annonces</p>
+                        </>
+                     )}
+                  </Link>
+                  <span className="w-28 hover:bg-border/70 py-2">
+                     <div>
+                        {user?.opinions.length === 0 && (
                            <>
                               <p className="font-semibold leading-5">0</p>
-                              <p className="text-sm">Annonce</p>
+                              <p className="text-sm">Avis</p>
                            </>
                         )}
-                        {user?.houses.length === 1 && (
+                        {user?.houses.length > 0 && (
                            <>
                               <p className="font-semibold leading-5">
-                                 {user?.houses.length}
+                                 {user?.opinions.length}
                               </p>
-                              <p className="text-sm">Annonce</p>
+                              <p className="text-sm">Avis</p>
                            </>
                         )}
-                        {user?.houses.length > 1 && (
-                           <>
-                              <p className="font-semibold leading-5">
-                                 {user?.houses.length}
-                              </p>
-                              <p className="text-sm">Annonces</p>
-                           </>
-                        )}
-                     </Link>
-                     <span className="w-28 hover:bg-border/70 py-2">
-                        <p className="font-semibold leading-5">157</p>
-                        <p className="text-sm">Avis</p>
-                     </span>
-                  </div>
-                  <div className="border rounded-lg shadow-sm bg-card w-full p-3 flex flex-col gap-3">
-                     {/* Biographie */}
-                     <div>
-                        <p className="font-semibold mb-2">Biographie</p>
-                        <p className="text-sm leading-4">
-                           {user?.biography ? (
-                              user?.biography
-                           ) : (
-                              <p className="text-xs">
-                                 {user.firstName} n'a pas encore renseigné de
-                                 biographie
-                              </p>
-                           )}
-                        </p>
                      </div>
-                     {/* Centres d'intêrets */}
-                     <div>
-                        <p className="font-semibold mb-2">Centres d'intêrets</p>
-                        <p className="text-sm">
-                           {user?.interests ? (
-                              user?.interests
-                           ) : (
-                              <p className="text-xs">
-                                 {user.firstName} n'a pas encore renseigné de
-                                 centres d'interêts
-                              </p>
-                           )}
-                        </p>
-                     </div>
-                     {/* Langues parlées */}
-                     <div>
-                        <p className="font-semibold mb-2">Langues parlées</p>
-                        <p className="text-sm">
-                           {user?.languages ? (
-                              user?.languages
-                           ) : (
-                              <p className="text-xs">
-                                 {user.firstName} n'a pas encore renseigné de
-                                 langues parlées
-                              </p>
-                           )}
-                        </p>
-                     </div>
-                  </div>
-
-                  {/* Connexions */}
-                  <div className="border rounded-lg shadow-sm bg-card p-3">
-                     <div className="flex items-center justify-between mb-2">
-                        <p className="font-semibold">Connexions</p>
-                        <p className="text-sm text-cyan-500">Voir tout</p>
-                     </div>
-                     <div className="bg-secondary h-96"></div>
-                  </div>
-               </aside>
-               <div className="w-[100%] md:w-[75%] flex flex-col gap-5">
-                  {/* Publications */}
+                  </span>
+               </div>
+               <div className="border rounded-lg shadow-sm bg-card w-full p-3 flex flex-col gap-3">
+                  {/* Biographie */}
                   <div>
-                     <p className="text-xl text-medium bg-card rounded-lg border h-[500px]">
-                        Publications
-                     </p>
+                     <p className="font-semibold mb-2">Biographie</p>
+                     <div className="text-sm leading-4">
+                        {user?.biography ? (
+                           user?.biography
+                        ) : (
+                           <p className="text-xs">
+                              {user.firstName} n'a pas encore renseigné de
+                              biographie
+                           </p>
+                        )}
+                     </div>
                   </div>
+                  {/* Centres d'intêrets */}
+                  <div>
+                     <p className="font-semibold mb-2">Centres d'intêrets</p>
+                     <div className="text-sm">
+                        {user?.interests ? (
+                           user?.interests
+                        ) : (
+                           <p className="text-xs">
+                              {user.firstName} n'a pas encore renseigné de
+                              centres d'interêts
+                           </p>
+                        )}
+                     </div>
+                  </div>
+                  {/* Langues parlées */}
+                  <div>
+                     <p className="font-semibold mb-2">Langues parlées</p>
+                     <div className="text-sm">
+                        {user?.languages ? (
+                           user?.languages
+                        ) : (
+                           <p className="text-xs">
+                              {user.firstName} n'a pas encore renseigné de
+                              langues parlées
+                           </p>
+                        )}
+                     </div>
+                  </div>
+               </div>
+
+               {/* Connexions */}
+               <div className="border rounded-lg shadow-sm bg-card p-3">
+                  <div className="flex items-center justify-between mb-2">
+                     <p className="font-semibold">Connexions</p>
+                     <p className="text-sm text-cyan-500">Voir tout</p>
+                  </div>
+                  <div className="bg-secondary h-96"></div>
+               </div>
+            </aside>
+            {/* Droite */}
+            <section className="w-[100%] md:w-[75%] flex flex-col gap-5">
+               {/* Publications */}
+               <div className="rounded bg-card/50 p-5">
+                  <p className="text-2xl font-medium mb-5">Publications</p>
+                  {posts.length === 0 ? (
+                     <p>Aucun post à afficher pour le moment...</p>
+                  ) : (
+                     <div className="flex flex-col gap-5">
+                        {posts.map((post) => (
+                           <PostCard
+                              key={post.id}
+                              id={post.id}
+                              currentUserId={user?.id ?? ""}
+                              parentId={post.parentId}
+                              content={post.content}
+                              image={post.image}
+                              author={post.author}
+                              createdAt={post.createdAt}
+                              comments={post.children}
+                              likes={post.likes}
+                           />
+                        ))}
+                     </div>
+                  )}
                </div>
             </section>
          </Container>

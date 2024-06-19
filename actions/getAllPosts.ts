@@ -3,6 +3,9 @@ import { db } from "@/lib/db";
 export const getAllPosts = async () => {
    try {
       const posts = db.post.findMany({
+         orderBy:{
+            createdAt: 'asc'
+         },
          include: {
             author: {
                select: {
@@ -13,7 +16,7 @@ export const getAllPosts = async () => {
                   profilePicture: true,
                },
             },
-            comments: {
+            children: {
                include: {
                   author: {
                      select: {

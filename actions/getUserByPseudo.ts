@@ -12,8 +12,13 @@ export const getUserByPseudo = async (userPseudo: string) => {
          where: {
             pseudo: userPseudo,
          },
-         include: {
+         include:{
             houses: true,
+            opinions: {
+               select: {
+                  id: true,
+               }
+            }
          }
       });
 

@@ -3,6 +3,7 @@ import Spacing from "@/components/elements/Spacing";
 import SideNav from "@/components/navigation/SideNav";
 import AddPostForm from "@/components/posts/AddPostForm";
 import PostCard from "@/components/posts/PostCard";
+import PostForm from "@/components/posts/PostForm";
 import { Separator } from "@/components/ui/separator";
 import { getUserByClerkId } from "@/queries/getUserByClerkId";
 import { auth, currentUser } from "@clerk/nextjs/server";
@@ -26,7 +27,7 @@ export default async function Social() {
    return (
       <div className="">
          {/* Formulaire d'ajout de post */}
-         <AddPostForm connectedUser={connectedUserData} />
+         <PostForm connectedUser={connectedUserData} />
 
          <Separator className="my-10" />
 
@@ -42,10 +43,11 @@ export default async function Social() {
                         id={post.id}
                         currentUserId={user?.id ?? ""}
                         content={post.content}
+                        parentId={post.parentId}
                         image={post.image}
                         author={post.author}
                         createdAt={post.createdAt}
-                        comments={post.comments}
+                        comments={post.children}
                         likes={post.likes}
                      />
                   ))}

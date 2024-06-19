@@ -9,6 +9,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Input } from "../ui/input";
 import Image from "next/image";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { toast } from "../ui/use-toast";
 
 interface PostReplyFormProps {
    postId: string;
@@ -28,13 +31,31 @@ const PostReplyForm = ({
    currentUserId,
 }: PostReplyFormProps) => {
    const [isLoading, setIsLoading] = useState(false);
+   const router = useRouter();
    const form = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
       defaultValues: {
          content: "",
       },
    });
-   function onSubmit(values: z.infer<typeof formSchema>) {}
+   function onSubmit(values: z.infer<typeof formSchema>) {
+      setIsLoading(true);
+      axios
+         .post(`/api/post/${postId}`, values)
+         .then((res) => {
+            setIsLoading(false);
+            form.reset();
+            router.refresh();
+         })
+         .catch((error) => {
+            console.log(error);
+            toast({
+               variant: "destructive",
+               description:
+                  "Une erreur est survenue, veuillez réessayer plus tard",
+            });
+         });
+   }
    return (
       <Form {...form}>
          <form
@@ -69,7 +90,11 @@ const PostReplyForm = ({
                      </FormItem>
                   )}
                />
-               <Button disabled={isLoading} className="w-[100px] mt-1" type="submit">
+               <Button
+                  disabled={isLoading}
+                  className="w-[100px] mt-1"
+                  type="submit"
+               >
                   {isLoading ? (
                      // Pendant le chargement
                      <>

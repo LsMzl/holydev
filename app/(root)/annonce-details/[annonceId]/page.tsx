@@ -8,7 +8,7 @@ import { getHouseById } from "@/queries/getHouseById";
 import HouseDetails from "@/components/house/HouseDetails";
 import React from "react";
 import { getOpinionsByHouseId } from "@/actions/getOpinionsByHouseId";
-
+import { getLastsOpinionsByHouseId } from "@/actions/getLastsOpinionsByHouseId";
 
 interface HouseDetailsProps {
    params: {
@@ -17,16 +17,25 @@ interface HouseDetailsProps {
 }
 
 const AnnonceDetails = async ({ params }: HouseDetailsProps) => {
+   // Données annonce
    const house = await getHouseById(params.annonceId);
-   const opinions = await getOpinionsByHouseId(params.annonceId);
-   
-
    if (!house) return <div>Oups, l'annonce n'a pas été trouvée</div>;
+
+   // Données 10 derniers avis
+   const lastOpinions = await getLastsOpinionsByHouseId(params.annonceId);
+   if (!lastOpinions) return null;
+   console.log('page', lastOpinions)
 
    /** Contient toutes les réservations d'une maison */
    const bookings = await getBookings(house?.id);
 
-   return <HouseDetails house={house} bookings={bookings}/>;
+   return (
+      <HouseDetails
+         house={house}
+         bookings={bookings}
+         lastOpinions={lastOpinions}
+      />
+   );
 };
 
 export default AnnonceDetails;
