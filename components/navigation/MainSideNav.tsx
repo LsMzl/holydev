@@ -59,7 +59,7 @@ const sideNavLinks: SideNavProps[] = [
    },
 ];
 
-const SideNav = ({
+const MainSideNav = ({
    userMail,
    userAvatar,
    userFirstName,
@@ -205,4 +205,4 @@ const SideNav = ({
    );
 };
 
-export default SideNav;
+export default MainSideNav;

@@ -43,6 +43,7 @@ import { Separator } from "../ui/separator";
 import { dataTypes } from "@/types/dataTypes";
 import OpinionsCarousel from "./OpinionsCarousel";
 import { v4 as uuidv4 } from "uuid";
+import AllOpinionsDialog from "./AllOpinionsDialog";
 
 interface HouseDetailsProps {
    house: any;
@@ -58,9 +59,20 @@ interface HouseDetailsProps {
          profilePicture: string;
       };
    }[];
+   allOpinions: {
+      title: string;
+      content: string;
+      createdAt: Date;
+      author: {
+         lastName: string;
+         firstName: string;
+         pseudo: string;
+         profilePicture: string;
+      };
+   }[];
 }
 
-const HouseDetails = ({ house, bookings, lastOpinions }: HouseDetailsProps) => {
+const HouseDetails = ({ house, bookings, lastOpinions, allOpinions }: HouseDetailsProps) => {
    const { getCountryByCode, getStateByCode } = useLocation();
    const country = getCountryByCode(house?.country ?? "");
    const state = getStateByCode(house?.country ?? "", house?.state ?? "");
@@ -449,9 +461,7 @@ const HouseDetails = ({ house, bookings, lastOpinions }: HouseDetailsProps) => {
                   ) : (
                      <>
                         <p>{house.Opinions.length} avis</p>
-                        <Button variant="outline" className="rounded-full">
-                           Voir tout
-                        </Button>
+                        <AllOpinionsDialog allOpinions={allOpinions}/>
                      </>
                   )}
                </div>
@@ -463,7 +473,7 @@ const HouseDetails = ({ house, bookings, lastOpinions }: HouseDetailsProps) => {
             {/* Carousel avis */}
             <div>
                {lastOpinions.length > 0 && (
-                  <OpinionsCarousel lastOpinions={lastOpinions} />
+                  <OpinionsCarousel lastOpinions={lastOpinions}/>
                )}
             </div>
          </section>

@@ -47,7 +47,7 @@ const PostCard = ({
 }: PostCardProps) => {
    return (
       <article
-         className={`flex w-full flex-col rounded-lg bg-card ${
+         className={`flex w-full flex-col rounded-lg bg-card pr-[65px] ${
             isComment ? "p-5 ml-10 mb-5" : "bg-card/50 p-7 "
          }`}
       >
@@ -79,9 +79,20 @@ const PostCard = ({
                   <p className="mt-2 text-sm text-foreground/80 font-light">
                      {content}
                   </p>
+                  {image && (
+                     <div className="w-full bg-transparent h-60 mt-5 relative rounded-lg">
+                        <Image
+                           src={image}
+                           alt="Image du post"
+                           fill
+                           sizes="100%"
+                           className="rounded-lg object-cover"
+                        />
+                     </div>
+                  )}
 
+                  {/* Icons */}
                   <div className="mt-5 flex flex-col gap-3">
-                     {/* Icons */}
                      <div className="flex gap-3.5">
                         {/* Like */}
                         <Heart size={20} className="cursor-pointer" />
@@ -108,12 +119,15 @@ const PostCard = ({
                                  alt={`Photo de profil de ${comment.author.firstName} ${comment.author.lastName}`}
                                  width={24}
                                  height={24}
-                                 className={`${index !== 0 && "-ml-5"} rounded-full object-cover border border-cyan-500`}
+                                 className={`${
+                                    index !== 0 && "-ml-5"
+                                 } rounded-full object-cover border border-cyan-500`}
                               />
                            ))}
                            <Link href={`/social/post/${id}`}>
                               <p className="mt-1 text-sm font-medium text-foreground/70">
-                                 {comments.length} réponse{comments.length > 1 && "s"}
+                                 {comments.length} réponse
+                                 {comments.length > 1 && "s"}
                               </p>
                            </Link>
                         </div>

@@ -7,19 +7,17 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { getUserByClerkId } from "@/queries/getUserByClerkId";
-import { Dialog } from "@/components/ui/dialog";
-import { DialogTrigger } from "@radix-ui/react-dialog";
 import BiographyPopUpForm from "@/components/user/profile/BiographyPopUpForm";
 import SettingsMenu from "@/components/user/profile/SettingsMenu";
 import UpdateProfileForm from "@/components/user/profile/UpdateProfileForm";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { v4 as uuidv4 } from "uuid";
 
 import PostCard from "@/components/posts/PostCard";
 
 import { getPostsByUserId } from "@/actions/getPostsByUserId";
 import AddPostForm from "@/components/posts/AddPostForm";
-
 
 interface ProfilPageProps {
    params: {
@@ -263,20 +261,19 @@ const MyProfile = async ({ params, userId }: ProfilPageProps) => {
                      <div className="flex flex-col gap-5">
                         {posts.map((post) => (
                            <>
-                           <p>Id du post: {post.id}</p>
-                           <PostCard
-                              key={post.id}
-                              id={post.id}
-                              currentUserId={user?.id ?? ""}
-                              parentId={post.parentId}
-                              content={post.content}
-                              image={post.image}
-                              author={post.author}
-                              createdAt={post.createdAt}
-                              comments={post.children}
-                              likes={post.likes}
-                           />
-                           
+                              <p>Id du post: {post.id}</p>
+                              <PostCard
+                                 key={uuidv4()}
+                                 id={post.id}
+                                 currentUserId={user?.id ?? ""}
+                                 parentId={post.parentId}
+                                 content={post.content}
+                                 image={post.image}
+                                 author={post.author}
+                                 createdAt={post.createdAt}
+                                 comments={post.children}
+                                 likes={post.likes}
+                              />
                            </>
                         ))}
                      </div>

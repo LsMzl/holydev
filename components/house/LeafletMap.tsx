@@ -27,7 +27,7 @@ const LeafletMap = ({ cityLatitude, cityLongitude }: MapProps) => {
       // Coordonnées géographiques du logement (latitude, longitude)
       center={[`${cityLatitude}`, `${cityLongitude}`]}
       zoom={13}
-      className="h-[400px] rounded-md"
+      className="h-[400px] rounded-md z-50"
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

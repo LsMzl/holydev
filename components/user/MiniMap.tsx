@@ -27,7 +27,7 @@ const MiniMap = ({ cityLatitude, cityLongitude }: MiniMapProps) => {
          // Coordonnées géographiques du logement (latitude, longitude)
          center={[`${cityLatitude}`, `${cityLongitude}`]}
          zoom={12}
-         className="h-[200px] rounded-md"
+         className="h-[200px] rounded-md z-50"
       >
          <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

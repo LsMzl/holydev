@@ -2,14 +2,13 @@ import HousesList from "@/components/home/HousesList";
 
 import { getAllHouses } from "../../queries/getAllHouses";
 import { getAllCategories } from "@/queries/getAllCategories";
-import SideNav from "@/components/navigation/SideNav";
 import { auth } from "@clerk/nextjs/server";
 import { getUserByClerkId } from "@/queries/getUserByClerkId";
 import LastHousesCarousel from "@/components/home/LastHousesCarousel";
 import { getLastHouses } from "@/queries/getLastHouses";
 import Spacing from "@/components/elements/Spacing";
 import { getAllHouseTypes } from "@/queries/getAllHouseTypes";
-import PostCard from "@/components/posts/PostCard";
+import MainSideNav from "@/components/navigation/MainSideNav";
 
 interface HousesProps {
    searchParams: {
@@ -35,7 +34,7 @@ export default async function Home({ searchParams }: HousesProps) {
    return (
       <div className="flex w-full min-h-screen">
          <div className="lg:w-[20%] 2xl:w-[15%]">
-            <SideNav
+            <MainSideNav
                userMail={connectedUser?.email}
                userAvatar={connectedUser?.profilePicture}
                userFirstName={connectedUser?.firstName}

@@ -35,9 +35,11 @@ import {
    ImagePlusIcon,
    Loader2,
    SmilePlusIcon,
+   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "../ui/input";
+import EmojiPicker from "emoji-picker-react";
 
 interface AddPostProps {
    connectedUser: {
@@ -57,8 +59,10 @@ const formSchema = z.object({
 
 const AddPostForm = ({ connectedUser }: AddPostProps) => {
    const [isLoading, setIsLoading] = useState(false);
+   const [isPickerVisible, setIsPickerVisible] = useState(false);
    const router = useRouter();
    const [files, setFiles] = useState<File[]>([]);
+
    const form = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
       defaultValues: {
@@ -89,11 +93,20 @@ const AddPostForm = ({ connectedUser }: AddPostProps) => {
          };
 
          fileReader.readAsDataURL(file);
-         
+
+         setTimeout(() => {
+            console.log("localStorage vidé");
+            localStorage.clear();
+            form.reset();
+         }, 120000);
       }
    };
 
    const localImg = localStorage.getItem("image");
+
+   const handleEmojiSelect = (emoji: any) => {
+      form.setValue("content", form.getValues("content") + emoji.emoji);
+   };
 
    function onSubmit(values: z.infer<typeof formSchema>) {
       setIsLoading(true);
@@ -102,6 +115,7 @@ const AddPostForm = ({ connectedUser }: AddPostProps) => {
          .then((res) => {
             setIsLoading(false);
             router.refresh();
+            localStorage.clear();
             form.reset();
          })
          .catch((err) => {
@@ -144,7 +158,7 @@ const AddPostForm = ({ connectedUser }: AddPostProps) => {
                   <DialogTitle>Créer un post</DialogTitle>
                </DialogHeader>
                <Separator className="my-2" />
-               <div>
+               <div className="">
                   <Form {...form}>
                      <form onSubmit={form.handleSubmit(onSubmit)}>
                         {/* Contenu du post */}
@@ -173,12 +187,35 @@ const AddPostForm = ({ connectedUser }: AddPostProps) => {
                               </FormItem>
                            )}
                         />
+
                         {/* Affichage de l'image si existante */}
                         {localImg != null && (
                            <div className="w-full h-60 mt-5 relative">
-                              <Image src={localImg} alt="" fill sizes="100%" className="object-cover rounded-lg"/>
+                              <Image
+                                 src={localImg}
+                                 alt=""
+                                 fill
+                                 sizes="100%"
+                                 className="object-cover rounded-lg"
+                              />
+                              {/* // TODO: Ajouter icone pour supprimer image   */}
                            </div>
                         )}
+                        {/* Emoji Menu */}
+                        <EmojiPicker
+                           open={isPickerVisible}
+                           onEmojiClick={handleEmojiSelect}
+                           style={{
+                              position: "absolute",
+                              bottom: "0",
+                              left: "30%",
+                           }}
+                           allowExpandReactions={false}
+                           height={300}
+                           searchDisabled={true}
+                           className="relative"
+                        />
+
                         {/* Bas du formulaire */}
                         <div className="flex justify-between mt-5">
                            {/* Icones */}
@@ -223,9 +260,16 @@ const AddPostForm = ({ connectedUser }: AddPostProps) => {
                                  )}
                               />
 
-                              <div className="rounded-full bg-card p-2.5">
-                                 <SmilePlusIcon size={20} />
+                              <div className="rounded-full bg-card p-2.5 cursor-pointer hover:bg-blue-400 transition-colors">
+                                 <SmilePlusIcon
+                                    size={20}
+                                    onClick={() =>
+                                       setIsPickerVisible(!isPickerVisible)
+                                    }
+                                    className=""
+                                 />
                               </div>
+
                               <div className="rounded-full bg-card p-2.5">
                                  <ImageIcon size={20} />
                               </div>

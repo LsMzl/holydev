@@ -233,7 +233,7 @@ model Booking {
 model Post {
   id              String   @id @default(uuid())
   content String  @db.Text
-  image String?
+  image String? @db.LongText
   createdAt DateTime             @default(now())
   //! Un post n'a qu'un seul auteur
   author   User   @relation(fields: [authorId], references: [id])

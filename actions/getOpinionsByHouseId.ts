@@ -7,7 +7,14 @@ export const getOpinionsByHouseId = async (houseId: string) => {
             houseId: houseId,
          },
          include: {
-            author: true,
+            author: {
+               select: {
+                  firstName: true,
+                  lastName: true,
+                  pseudo: true,
+                  profilePicture: true,
+               }
+            },
             house: true,
          },
       });
